@@ -11,8 +11,8 @@
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
-		"compression-webpack-plugin": "^10.0.0",
 		"copy-webpack-plugin": "^11.0.0",
+		"css-minimizer-webpack-plugin": "^5.0.1",
 		"html-webpack-plugin": "^5.5.3",
 		"terser-webpack-plugin": "^5.3.9",
 		"webpack": "^5.88.2",

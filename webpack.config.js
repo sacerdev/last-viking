@@ -2,8 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
-const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const ZipWebpackPlugin = require('zip-webpack-plugin');
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = {
   mode: 'production',
@@ -17,7 +17,7 @@ module.exports = {
   optimization: {
     minimizer: [
       new TerserWebpackPlugin(),
-      new CompressionWebpackPlugin(),
+      new CssMinimizerPlugin(),
     ],
   },
   plugins: [
