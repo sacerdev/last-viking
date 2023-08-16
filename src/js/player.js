@@ -16,8 +16,10 @@ export class Player extends PhysicsEntity {
 		this.frameX = 0;
 		this.frameY = 0;
 		this.scale = 2;
+		this.y = game.height - this.getHeight();
 
 		this.directionH = DIRECTIONS.RIGHT;
+		this.isOnPlatform = false;
 
 		this.states = [
 			new IdleState(this),
@@ -33,9 +35,9 @@ export class Player extends PhysicsEntity {
 		this.handleInput(this.game.input);
 	}
 	draw(context) {
+		context.save(); // Save the current transformation state.
 		context.strokeStyle = 'red';
 		context.strokeRect(this.x, this.y, this.getWidth(), this.getHeight());
-		context.save(); // Save the current transformation state.
     	context.scale(this.directionH, 1); // Apply scaling to flip the sprite.
 
 		const destX = (this.directionH === DIRECTIONS.RIGHT) ? this.x : -this.x - this.getWidth();
@@ -77,5 +79,8 @@ export class Player extends PhysicsEntity {
 	setState(state) {
 		this.currentState = this.states[state];
 		this.currentState.enter();
+	}
+	isGrounded() {
+		return this.isOnPlatform || this.isOnGround();
 	}
 }

@@ -8,6 +8,12 @@ const level1MapData = [
 	[],
 	[],
 	[],
+	[],//[,,,,,1,1,1],
+	[],
+	[],
+	[],
+	[],
+	[],
 	[,,,,,1,1,1],
 ];
 
@@ -17,10 +23,6 @@ export class Game {
 		this.width = width;
 		this.height = height;
 		this.gravity = 1;
-		this.input = new InputHandler();
-		this.player = new Player(this);
-		this.needsUpdate = [this.player];
-		this.needsDraw = [this.player];
 
 		// Todo: rework this to load different levels.
 		this.currentLevel = 0;
@@ -29,6 +31,12 @@ export class Game {
 				map: new GameMap(this, level1MapData),
 			}
 		];
+
+		// Create game Objects.
+		this.input = new InputHandler();
+		this.player = new Player(this);
+		this.needsUpdate = [this.player];
+		this.needsDraw = [this.player];
 	}
 	update(deltaTime) {
 		this.needsUpdate.forEach((entity) => {
@@ -42,12 +50,18 @@ export class Game {
 		this.needsDraw.forEach((entity) => {
 			entity.draw(context);
 		});
-
+		context.fillStyle = 'blue';
+		context.fillRect(0, 357, 32, 32);
+		context.fillStyle = 'green';
+		context.fillRect(32, 291, 32, 32);
+		context.fillStyle = 'fuchsia';
+		context.fillRect(64, 291 + 32, 32, 32);
+		context.fillStyle = 'orange';
+		context.fillRect(96, 291 + 64, 32, 32);
 		// this.drawMap(context);
 	}
-
 	drawMap(context) {
-		const map = this.levels[this.currentLevel].map;
+		const map = this.getCurrentLevel().map;
 		const maxCol = Math.round(map.width / 32);
 		const maxRow = Math.round(map.height / 32);
 		for (let row = 0; row < maxRow; row++) {
@@ -66,5 +80,8 @@ export class Game {
 				}
 			}
 		}
+	}
+	getCurrentLevel() {
+		return this.levels[this.currentLevel];
 	}
 }

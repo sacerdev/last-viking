@@ -1,3 +1,5 @@
+import { collisionRec } from './utils';
+
 export class Entity {
 	constructor(game) {
 		this.game = game;
@@ -29,12 +31,15 @@ export class PhysicsEntity extends Entity {
 	isOnGround() {
 		return this.y + this.getHeight() >= this.game.height;
 	}
+	isGrounded() {
+		return this.isOnGround();
+	}
 	applyGravity() {
 		this.y += this.veloY;
-		if (!this.isOnGround()) {
+		if (!this.isGrounded()) {
+			//console.log('let fall');
 			this.veloY += this.weight * this.game.gravity;
 		} else {
-			this.y = this.game.height - this.getHeight();
 			this.veloY = 0;
 		}
 	}

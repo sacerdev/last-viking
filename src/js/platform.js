@@ -1,15 +1,7 @@
-export class Platform {
-	constructor(x, y, width, height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+import { Tile } from './tile';
 
-		this.color = 'red';
-	}
-	update() {}
-	draw(context) {
-		context.fillStyle = this.color;
-		context.fillRect(this.x, this.y, this.width, this.height);
+export class Platform extends Tile {
+	constructor(x, y, width, height, color = 'red') {
+		super(x, y, width, height, color);
 	}
 }

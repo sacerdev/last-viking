@@ -1,4 +1,5 @@
 import { State } from './state';
+import { collisionRec } from './utils';
 
 const STATES = {
 	IDLE: 0,
@@ -15,13 +16,21 @@ export class IdleState extends State {
 		this.animDelay = 20;
 	}
 	enter() {
-		console.log('enter idle', this.player);
+		handlePlatformCollision(this.player);
+		console.log('enter idle', this.player, this.player.isOnGround() && !this.player.isOnPlatform);
+		this.player.veloY = 0;
 		this.player.frameX = 0;
 		this.player.frameY = 0;
+		if (this.player.isOnGround() && !this.player.isOnPlatform) {
+			this.player.y = this.player.game.height - this.player.getHeight();
+		}
 	}
 	update() {
 		this.animate();
 		this.handleInput(this.player.game.input);
+		if (this.player.veloY > 0) {
+			this.player.setState(STATES.FALLING);
+		}
 	}
 	handleInput(input) {
 		if (input.keys.includes('ArrowRight') || input.keys.includes('ArrowLeft')) {
@@ -45,6 +54,7 @@ export class RunningState extends State {
 		this.player.frameY = 1;
 	}
 	update() {
+		handlePlatformCollision(this.player);
 		this.animate();
 		this.handleInput(this.player.game.input);
 	}
@@ -64,7 +74,9 @@ export class JumpingState extends State {
 		this.player = player;
 	}
 	enter() {
-		if (this.player.isOnGround()) {
+		console.log('enter jumping', this.player);
+		if (this.player.isGrounded()) {
+			this.player.isOnPlatform = false;
 			this.player.veloY -= 20;
 			this.player.frameX = 0;
 		} else {
@@ -73,14 +85,11 @@ export class JumpingState extends State {
 		this.player.frameY = 2;
 	}
 	update() {
-		this.handleInput(this.player.game.input);
-		if (!this.player.isOnGround()) {
+		if (!this.player.isGrounded()) {
 			this.player.frameX = 1;
 		}
-	}
-
-	handleInput(input) {
-		if (this.player.veloY > this.player.weight) {
+		if (this.player.veloY >= 0) {
+			console.log(this.player.veloY);
 			this.player.setState(STATES.FALLING);
 		}
 	}
@@ -92,12 +101,53 @@ export class FallingState extends State {
 		this.player = player;
 	}
 	enter() {
+		console.log('enter falling', this.player.veloY, this.player);
 		this.player.frameX = 1;
 		this.player.frameY = 2;
 	}
 	update() {
-		if (this.player.isOnGround()) {
+		handlePlatformCollision(this.player);
+		if (this.player.isGrounded()) {
 			this.player.setState(STATES.IDLE);
+		}
+	}
+
+}
+
+function handlePlatformCollision(player) {
+	//console.log({player})
+	const map = player.game.getCurrentLevel()?.map;
+	if (map?.platforms?.length > 0) {
+		let hasCollision = false;
+		map.platforms.forEach((platform) => {
+			// if (player.y + player.getHeight() > platform.y + 5) {
+			// 	console.log({
+			// 		plh: player.y + player.height,
+			// 		plh2: player.y + player.getHeight(),
+			// 		pfy2: platform.y + 5,
+			// 		ply: player.y,
+			// 		plgh: player.getHeight(),
+			// 		pfy: platform.y,
+			// 		ois: player.y + player.getHeight() > platform.y + 5
+			// 	})
+			// 	return;
+			// }
+			if (
+				collisionRec(
+					player.x, player.y, player.getWidth(), player.getHeight(),
+					platform.x, platform.y, platform.width, platform.height
+				) && player.veloY >= 0
+			) {
+				if (!player.isOnPlatform) {
+					console.log('holla');
+					player.y = platform.y + 3 - player.getHeight();
+					player.isOnPlatform = true;
+				}
+				hasCollision = true;
+			}
+		});
+		if (!hasCollision) {
+			player.isOnPlatform = false;
 		}
 	}
 }
