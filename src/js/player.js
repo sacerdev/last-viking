@@ -1,5 +1,10 @@
 import { PhysicsEntity } from './entity';
-import { IdleState } from './playerStates';
+import { FallingState, IdleState, JumpingState, RunningState } from './playerStates';
+
+const DIRECTIONS = {
+	RIGHT: 1,
+	LEFT: -1,
+};
 
 export class Player extends PhysicsEntity {
 	constructor(game) {
@@ -12,7 +17,14 @@ export class Player extends PhysicsEntity {
 		this.frameY = 0;
 		this.scale = 2;
 
-		this.states = [new IdleState(this)];
+		this.directionH = DIRECTIONS.RIGHT;
+
+		this.states = [
+			new IdleState(this),
+			new RunningState(this),
+			new JumpingState(this),
+			new FallingState(this),
+		];
 		this.currentState = this.states[0];
 		this.currentState.enter();
 	}
@@ -21,19 +33,24 @@ export class Player extends PhysicsEntity {
 		this.handleInput(this.game.input);
 	}
 	draw(context) {
-		context.fillStyle = 'red';
-		context.fillRect(this.x, this.y, this.getWidth(), this.getHeight());
+		context.strokeStyle = 'red';
+		context.strokeRect(this.x, this.y, this.getWidth(), this.getHeight());
+		context.save(); // Save the current transformation state.
+    	context.scale(this.directionH, 1); // Apply scaling to flip the sprite.
+
+		const destX = (this.directionH === DIRECTIONS.RIGHT) ? this.x : -this.x - this.getWidth();
 		context.drawImage(
 			this.sprite, // Image.
 			this.frameX * this.spriteWidth, // Source x.
 			this.frameY * this.spriteHeight, // Source y.
 			this.spriteWidth, // Source width.
 			this.spriteHeight, // Source height.
-			this.x, // Destination x.
+			destX, // Destination x.
 			this.y, // Destination y.
 			this.getWidth(), // Destination width.
 			this.getHeight() // Destination height.
 		);
+		context.restore(); // Restore the previous transformation state.
 	}
 	handleInput(input) {
 		//
@@ -42,8 +59,10 @@ export class Player extends PhysicsEntity {
 		this.x += this.speed;
 		if (input.keys.includes('ArrowRight')) {
 			this.speed = this.maxSpeed;
+			this.directionH = DIRECTIONS.RIGHT;
 		} else if (input.keys.includes('ArrowLeft')) {
 			this.speed = -this.maxSpeed;
+			this.directionH = DIRECTIONS.LEFT;
 		} else {
 			this.speed = 0;
 		}
@@ -53,13 +72,6 @@ export class Player extends PhysicsEntity {
 		}
 		if (this.x + this.getWidth() > this.game.width) {
 			this.x = this.game.width - this.getWidth();
-		}
-
-		//
-		// Y-Axis.
-		//
-		if (input.keys.includes(' ') && this.isOnGround()) {
-			this.veloY -= 20;
 		}
 	}
 	setState(state) {

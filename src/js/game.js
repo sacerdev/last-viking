@@ -10,7 +10,7 @@ const level1MapData = [
 	[],
 	[,,,,,1,1,1],
 ];
-console.log(level1MapData);
+
 export class Game {
 	constructor(width, height, assets) {
 		this.assets = assets;
@@ -33,15 +33,7 @@ export class Game {
 	update(deltaTime) {
 		this.needsUpdate.forEach((entity) => {
 			entity.update(deltaTime);
-			// Apply gravity.
-			if (entity.useGravity) {
-				entity.y += entity.veloY;
-				if (!entity.isOnGround()) {
-					entity.veloY += entity.weight * this.gravity;
-				} else {
-					entity.y = this.height - entity.getHeight();
-				}
-			}
+			entity?.applyGravity();
 		});
 	}
 	draw(context) {

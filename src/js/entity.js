@@ -22,11 +22,20 @@ export class PhysicsEntity extends Entity {
 		super(game);
 		this.useGravity = true;
 		this.speed = 0;
-		this.maxSpeed = 10;
+		this.maxSpeed = 5;
 		this.veloY = 0;
 		this.weight = 1;
 	}
 	isOnGround() {
 		return this.y + this.getHeight() >= this.game.height;
+	}
+	applyGravity() {
+		this.y += this.veloY;
+		if (!this.isOnGround()) {
+			this.veloY += this.weight * this.game.gravity;
+		} else {
+			this.y = this.game.height - this.getHeight();
+			this.veloY = 0;
+		}
 	}
 }
