@@ -1,0 +1,29 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	height: 100vh;
+	width: 100vw;
+	overflow: hidden;
+	background-color: #e0e0e0;
+}
+
+canvas {
+	image-rendering: pixelated;
+}
+
+#game--last-viking {
+	display: block;
+	background-color: #add8e6;
+}
+
+#game--last-viking--assets {
+	display: none;
+	visibility: hidden;
+	height: 0;
+	width: 0;
+	overflow: hidden;
+}
