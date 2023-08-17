@@ -22,6 +22,7 @@ export class Game {
 		this.needsDraw = [this.player];
 	}
 	update(deltaTime) {
+		this.getCurrentLevel().update(deltaTime);
 		this.needsUpdate.forEach((entity) => {
 			entity.update(deltaTime);
 			entity?.applyGravity();
@@ -31,7 +32,7 @@ export class Game {
 		// Clear.
 		context.clearRect(0, 0, this.width, this.height);
 		// Draw the level.
-		this.levels[this.currentLevel].draw(context);
+		this.getCurrentLevel().draw(context);
 		// Draw the entities.
 		this.needsDraw.forEach((entity) => {
 			entity.draw(context);

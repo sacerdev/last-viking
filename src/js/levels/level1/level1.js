@@ -1,3 +1,4 @@
+import { Enemy } from '../../entities/enemy';
 import { Level } from '../level';
 import{ GameMap } from './map.js';
 
@@ -7,9 +8,19 @@ export class Level1 extends Level {
 		this.width = game.width;
 		this.height = game.height;
 		this.map = new GameMap(this);
+		this.enemies = [
+			new Enemy(this.game),
+		]
 	}
 	draw(context) {
 		this.map.draw(context);
+		this.enemies.forEach((enemy) => {
+			enemy.draw(context);
+		});
 	}
-	update() {}
+	update() {
+		this.enemies.forEach((enemy) => {
+			enemy.update();
+		});
+	}
 }

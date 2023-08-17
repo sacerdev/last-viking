@@ -169,6 +169,7 @@ export class AttackingState extends PlayerState {
 	update() {
 		this.animate();
 		handlePlatformCollision(this.player);
+		checkForAttackOnEnemy(this.player);
 		if (this.attackFrame > this.maxFrame) {
 			this.player.setState(STATES.IDLE);
 		}
@@ -226,5 +227,28 @@ function handlePlatformCollision(player) {
 		if (!hasCollision) {
 			player.isOnPlatform = false;
 		}
+	}
+}
+
+function checkForAttackOnEnemy(player) {
+	const map = player.game.getCurrentLevel()?.map;
+	if (map?.enemies?.length > 0) {
+		map.enemies.forEach((enemy) => {
+			if (
+				collisionRec(
+					player.x,
+					player.y,
+					player.getWidth(),
+					player.getHeight(),
+					enemy.x,
+					enemy.y,
+					enemy.getWidth(),
+					enemy.getHeight()
+				)
+			) {
+				console.log('hit');
+				//map.removeEnemy(enemy);
+			}
+		});
 	}
 }
