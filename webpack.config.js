@@ -24,6 +24,9 @@ module.exports = (env, options) => {
             compress: {
               drop_console: isProduction,
             },
+            mangle: {
+              properties: isProduction,
+            }
           },
         }),
         new CssMinimizerPlugin(),

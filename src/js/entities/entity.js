@@ -1,16 +1,14 @@
-import { collisionRec } from './utils';
+import { Node2D } from '../node2D';
 
-export class Entity {
+export class Entity extends Node2D {
 	constructor(game) {
-		this.game = game;
+		super(game);
+		this.x = this.game.width / 2 - this.width / 2;
+		this.y = this.game.height / 2 - this.height / 2;
 		this.width = 32;
 		this.height = 32;
-		this.x = game.width / 2 - this.width / 2;
-		this.y = game.height / 2 - this.height / 2;
 		this.scale = 1;
 	}
-	update() {}
-	draw() {}
 	getWidth() {
 		return this.width * this.scale;
 	}
@@ -37,7 +35,6 @@ export class PhysicsEntity extends Entity {
 	applyGravity() {
 		this.y += this.veloY;
 		if (!this.isGrounded()) {
-			//console.log('let fall');
 			this.veloY += this.weight * this.game.gravity;
 		} else {
 			this.veloY = 0;

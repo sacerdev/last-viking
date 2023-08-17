@@ -1,5 +1,5 @@
 import { PhysicsEntity } from './entity';
-import { AttackingState, FallingState, IdleState, JumpingState, RunningState } from './playerStates';
+import { AttackingState, FallingState, IdleState, JumpingState, RunningState } from '../states/playerStates';
 import { Weapon } from './weapon';
 
 const DIRECTIONS = {

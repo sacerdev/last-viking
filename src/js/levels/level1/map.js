@@ -1,17 +1,19 @@
-import { Platform } from './platform';
+import { Platform } from '../../platform';
+import TILES from './tiles';
 
 const TILE_TYPES = {
 	PLATFORM: 1
 }
 
 export class GameMap {
-	constructor(game, data, width, height) {
-		this.game = game;
-		this.data = data;
-		this.width = width || this.game.width;
-		this.height = height || this.game.height;
+	constructor(level) {
+		this.level = level;
+		this.data = TILES;
+		this.width = level.width;
+		this.height = level.height;
 
 		this.platforms = getTilesByType(this, TILE_TYPES.PLATFORM, Platform);
+		console.log(this);
 	}
 	draw(context) {
 		this.platforms.forEach((platform) => {

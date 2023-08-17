@@ -1,5 +1,5 @@
 import { State } from './state';
-import { collisionRec } from './utils';
+import { collisionRec } from '../utils';
 
 const STATES = {
 	IDLE: 0,
@@ -23,14 +23,15 @@ class PlayerState extends State {
 		this.player = player;
 	}
 	updateWeaponOffset(frame = this.player.frameX) {
-		this.player.wpnOffX = WPN_OFF[this.state][frame][0] * this.player.scale;
-		this.player.wpnOffY = WPN_OFF[this.state][frame][1] * this.player.scale;
+		const state = Object.keys(STATES)[this.state];
+		this.player.wpnOffX = WPN_OFF[state][frame][0] * this.player.scale;
+		this.player.wpnOffY = WPN_OFF[state][frame][1] * this.player.scale;
 	}
 }
 
 export class IdleState extends PlayerState {
 	constructor(player) {
-		super('IDLE', player);
+		super(STATES.IDLE, player);
 		this.maxFrame = 4;
 		this.animDelay = 20;
 	}
@@ -66,7 +67,7 @@ export class IdleState extends PlayerState {
 
 export class RunningState extends PlayerState {
 	constructor(player) {
-		super('RUNNING', player);
+		super(STATES.RUNNING, player);
 		this.maxFrame = 2;
 		this.animDelay = 4;
 	}
@@ -95,7 +96,7 @@ export class RunningState extends PlayerState {
 
 export class JumpingState extends PlayerState {
 	constructor(player) {
-		super('JUMPING', player);
+		super(STATES.JUMPING, player);
 	}
 	enter() {
 		console.log('enter jumping', this.player);
@@ -127,7 +128,7 @@ export class JumpingState extends PlayerState {
 
 export class FallingState extends PlayerState {
 	constructor(player) {
-		super('FALLING', player);
+		super(STATES.FALLING, player);
 	}
 	enter() {
 		console.log('enter falling', this.player.veloY, this.player);
@@ -150,7 +151,7 @@ export class FallingState extends PlayerState {
 
 export class AttackingState extends PlayerState {
 	constructor(player) {
-		super('ATTACKING', player);
+		super(STATES.ATTACKING, player);
 		this.attackFrame = 0;
 		this.maxFrame = 2;
 		this.animDelay = 10;
