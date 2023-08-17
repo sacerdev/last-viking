@@ -1,5 +1,6 @@
 import { PhysicsEntity } from './entity';
 import { FallingState, IdleState, JumpingState, RunningState } from './playerStates';
+import { Weapon } from './weapon';
 
 const DIRECTIONS = {
 	RIGHT: 1,
@@ -21,6 +22,10 @@ export class Player extends PhysicsEntity {
 		this.directionH = DIRECTIONS.RIGHT;
 		this.isOnPlatform = false;
 
+		this.wpnOffX = 0;
+		this.wpnOffY = 0;
+		this.weapon = new Weapon(game, this);
+
 		this.states = [
 			new IdleState(this),
 			new RunningState(this),
@@ -38,8 +43,7 @@ export class Player extends PhysicsEntity {
 		context.save(); // Save the current transformation state.
 		context.strokeStyle = 'red';
 		context.strokeRect(this.x, this.y, this.getWidth(), this.getHeight());
-    	context.scale(this.directionH, 1); // Apply scaling to flip the sprite.
-
+		context.scale(this.directionH, 1); // Apply scaling to flip the sprite.
 		const destX = (this.directionH === DIRECTIONS.RIGHT) ? this.x : -this.x - this.getWidth();
 		context.drawImage(
 			this.sprite, // Image.
@@ -52,6 +56,7 @@ export class Player extends PhysicsEntity {
 			this.getWidth(), // Destination width.
 			this.getHeight() // Destination height.
 		);
+		this.weapon.draw(context, destX, this.y);
 		context.restore(); // Restore the previous transformation state.
 	}
 	handleInput(input) {

@@ -11,6 +11,7 @@ window.addEventListener('load', () => {
 	const assets = {
 		sprites: {
 			viking: document.querySelector('#sprite--viking'),
+			weapon: document.querySelector('#sprite--weapon'),
 		}
 	};
 	const game = new Game(canvas.width, canvas.height, assets);

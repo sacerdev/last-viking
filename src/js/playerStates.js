@@ -8,10 +8,27 @@ const STATES = {
 	FALLING: 3,
 };
 
-export class IdleState extends State {
-	constructor(player) {
-		super('IDLE');
+const WPN_OFF = {
+	IDLE: [[23, 10], [23, 11], [23, 11], [23, 12], [23, 11]],
+	RUNNING: [[23, 10], [24, 9], [23, 10]],
+	JUMPING: [[23, 10], [23, 10]],
+	FALLING: [[23, 10], [23, 10]],
+};
+
+class PlayerState extends State {
+	constructor(state, player) {
+		super(state);
 		this.player = player;
+	}
+	updateWeaponOffset() {
+		this.player.wpnOffX = WPN_OFF[this.state][this.player.frameX][0] * this.player.scale;
+		this.player.wpnOffY = WPN_OFF[this.state][this.player.frameX][1] * this.player.scale;
+	}
+}
+
+export class IdleState extends PlayerState {
+	constructor(player) {
+		super('IDLE', player);
 		this.maxFrame = 4;
 		this.animDelay = 20;
 	}
@@ -21,12 +38,14 @@ export class IdleState extends State {
 		this.player.veloY = 0;
 		this.player.frameX = 0;
 		this.player.frameY = 0;
+		this.player.weapon.frameX = 1;
 		if (this.player.isOnGround() && !this.player.isOnPlatform) {
 			this.player.y = this.player.game.height - this.player.getHeight();
 		}
 	}
 	update() {
 		this.animate();
+		this.updateWeaponOffset();
 		this.handleInput(this.player.game.input);
 		if (this.player.veloY > 0) {
 			this.player.setState(STATES.FALLING);
@@ -35,16 +54,15 @@ export class IdleState extends State {
 	handleInput(input) {
 		if (input.keys.includes('ArrowRight') || input.keys.includes('ArrowLeft')) {
 			this.player.setState(STATES.RUNNING);
-		} else if (input.keys.includes(' ')) {
+		} else if (input.keys.includes('ArrowUp')) {
 			this.player.setState(STATES.JUMPING);
 		}
 	}
 }
 
-export class RunningState extends State {
+export class RunningState extends PlayerState {
 	constructor(player) {
-		super('RUNNING');
-		this.player = player;
+		super('RUNNING', player);
 		this.maxFrame = 2;
 		this.animDelay = 4;
 	}
@@ -62,16 +80,15 @@ export class RunningState extends State {
 	handleInput(input) {
 		if (input.keys.length === 0) {
 			this.player.setState(STATES.IDLE);
-		} else if (input.keys.includes(' ')) {
+		} else if (input.keys.includes('ArrowUp')) {
 			this.player.setState(STATES.JUMPING);
 		}
 	}
 }
 
-export class JumpingState extends State {
+export class JumpingState extends PlayerState {
 	constructor(player) {
-		super('JUMPING');
-		this.player = player;
+		super('JUMPING', player);
 	}
 	enter() {
 		console.log('enter jumping', this.player);
@@ -95,10 +112,9 @@ export class JumpingState extends State {
 	}
 }
 
-export class FallingState extends State {
+export class FallingState extends PlayerState {
 	constructor(player) {
-		super('FALLING');
-		this.player = player;
+		super('FALLING', player);
 	}
 	enter() {
 		console.log('enter falling', this.player.veloY, this.player);
@@ -120,18 +136,6 @@ function handlePlatformCollision(player) {
 	if (map?.platforms?.length > 0) {
 		let hasCollision = false;
 		map.platforms.forEach((platform) => {
-			// if (player.y + player.getHeight() > platform.y + 5) {
-			// 	console.log({
-			// 		plh: player.y + player.height,
-			// 		plh2: player.y + player.getHeight(),
-			// 		pfy2: platform.y + 5,
-			// 		ply: player.y,
-			// 		plgh: player.getHeight(),
-			// 		pfy: platform.y,
-			// 		ois: player.y + player.getHeight() > platform.y + 5
-			// 	})
-			// 	return;
-			// }
 			if (
 				collisionRec(
 					player.x, player.y, player.getWidth(), player.getHeight(),

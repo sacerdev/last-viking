@@ -1,4 +1,4 @@
-const MOVEMENT_KEYS = ['ArrowDown', 'ArrowLeft', 'ArrowRight', ' '];
+const MOVEMENT_KEYS = ['ArrowUp', 'ArrowLeft', 'ArrowRight', ' '];
 const KEY_DOWN_UP_KEYS = [...MOVEMENT_KEYS];
 
 export class InputHandler {
