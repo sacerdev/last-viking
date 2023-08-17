@@ -1,5 +1,5 @@
 import { PhysicsEntity } from './entity';
-import { FallingState, IdleState, JumpingState, RunningState } from './playerStates';
+import { AttackingState, FallingState, IdleState, JumpingState, RunningState } from './playerStates';
 import { Weapon } from './weapon';
 
 const DIRECTIONS = {
@@ -31,6 +31,7 @@ export class Player extends PhysicsEntity {
 			new RunningState(this),
 			new JumpingState(this),
 			new FallingState(this),
+			new AttackingState(this),
 		];
 		this.currentState = this.states[0];
 		this.currentState.enter();
