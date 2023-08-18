@@ -3,14 +3,19 @@ import { Entity } from './entity';
 export class Weapon extends Entity {
 	constructor(game, parent) {
 		super(game);
+
+		this.parent = parent;
+
+		this.x = this.parent.x;
+		this.y = this.parent.y;
+		this.width = 12 * 2;
+		this.height = 8 * 2;
+
 		this.sprite = this.game.assets.sprites.weapon;
 		this.spriteWidth = 12;
 		this.spriteHeight = 8;
 		this.frameX = 0;
 		this.frameY = 0;
-		this.parent = parent;
-		this.x = this.parent.x;
-		this.y = this.parent.y;
 		this.rotate = false;
 	}
 	draw(context, x, y) {
@@ -27,7 +32,7 @@ export class Weapon extends Entity {
 			drawX = 0; // The rotated X coordinate
 			drawY = 0;
 		}
-		context.strokeRect(drawX, drawY, this.getWidth(), this.getHeight());
+		context.strokeRect(drawX, drawY, this.width, this.height);
 		context.drawImage(
 			this.sprite, // Image.
 			this.frameX * this.spriteWidth, // Source x.
@@ -36,8 +41,8 @@ export class Weapon extends Entity {
 			this.spriteHeight, // Source height.
 			drawX, // Destination x.
 			drawY, // Destination y.
-			this.getWidth(), // Destination width.
-			this.getHeight() // Destination height.
+			this.width, // Destination width.
+			this.height // Destination height.
 		);
 		context.restore(); // Restore the previous transformation state.
 	}

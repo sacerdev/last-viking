@@ -7,13 +7,6 @@ export class Entity extends Node2D {
 		this.y = this.game.height / 2 - this.height / 2;
 		this.width = 32;
 		this.height = 32;
-		this.scale = 1;
-	}
-	getWidth() {
-		return this.width * this.scale;
-	}
-	getHeight() {
-		return this.height * this.scale;
 	}
 }
 

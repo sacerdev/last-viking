@@ -24,8 +24,8 @@ class PlayerState extends State {
 	}
 	updateWeaponOffset(frame = this.player.frameX) {
 		const state = Object.keys(STATES)[this.state];
-		this.player.wpnOffX = WPN_OFF[state][frame][0] * this.player.scale;
-		this.player.wpnOffY = WPN_OFF[state][frame][1] * this.player.scale;
+		this.player.wpnOffX = WPN_OFF[state][frame][0];
+		this.player.wpnOffY = WPN_OFF[state][frame][1];
 	}
 }
 
@@ -43,7 +43,7 @@ export class IdleState extends PlayerState {
 		this.player.frameY = 0;
 		this.player.weapon.frameX = 1;
 		if (this.player.isOnGround() && !this.player.isOnPlatform) {
-			this.player.y = this.player.game.height - this.player.getHeight();
+			this.player.y = this.player.game.height - this.player.height;
 		}
 	}
 	update() {
@@ -115,7 +115,6 @@ export class JumpingState extends PlayerState {
 			this.player.frameX = 1;
 		}
 		if (this.player.veloY >= 0) {
-			console.log(this.player.veloY);
 			this.player.setState(STATES.FALLING);
 		}
 	}
@@ -205,20 +204,18 @@ export class AttackingState extends PlayerState {
 }
 
 function handlePlatformCollision(player) {
-	//console.log({player})
 	const map = player.game.getCurrentLevel()?.map;
 	if (map?.platforms?.length > 0) {
 		let hasCollision = false;
 		map.platforms.forEach((platform) => {
 			if (
 				collisionRec(
-					player.x, player.y, player.getWidth(), player.getHeight(),
+					player.x, player.y, player.width, player.height,
 					platform.x, platform.y, platform.width, platform.height
 				) && player.veloY >= 0
 			) {
 				if (!player.isOnPlatform) {
-					console.log('holla');
-					player.y = platform.y + 3 - player.getHeight();
+					player.y = platform.y + 3 - player.height;
 					player.isOnPlatform = true;
 				}
 				hasCollision = true;
@@ -238,12 +235,12 @@ function checkForAttackOnEnemy(player) {
 				collisionRec(
 					player.x,
 					player.y,
-					player.getWidth(),
-					player.getHeight(),
+					player.height,
+					player.width,
 					enemy.x,
 					enemy.y,
-					enemy.getWidth(),
-					enemy.getHeight()
+					enemy.height,
+					enemy.width
 				)
 			) {
 				console.log('hit');

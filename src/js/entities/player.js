@@ -11,13 +11,15 @@ export class Player extends PhysicsEntity {
 	constructor(game) {
 		super(game);
 
+		this.y = game.height - this.height;
+		this.width = 32 * 2;
+		this.height = 32 * 2;
+
 		this.sprite = game.assets.sprites.viking;
 		this.spriteWidth = 32;
 		this.spriteHeight = 32;
 		this.frameX = 0;
 		this.frameY = 0;
-		this.scale = 2;
-		this.y = game.height - this.getHeight();
 
 		this.directionH = DIRECTIONS.RIGHT;
 		this.isOnPlatform = false;
@@ -41,11 +43,15 @@ export class Player extends PhysicsEntity {
 		this.handleInput(this.game.input);
 	}
 	draw(context) {
-		context.save(); // Save the current transformation state.
+		// Save the current transformation state.
+		context.save();
+		// Draw Rect for debugging purpose.
 		context.strokeStyle = 'red';
-		context.strokeRect(this.x, this.y, this.getWidth(), this.getHeight());
-		context.scale(this.directionH, 1); // Apply scaling to flip the sprite.
-		const destX = (this.directionH === DIRECTIONS.RIGHT) ? this.x : -this.x - this.getWidth();
+		context.strokeRect(this.x, this.y, this.width, this.height);
+		// Apply scaling to flip the sprite.
+		context.scale(this.directionH, 1);
+		const destX = (this.directionH === DIRECTIONS.RIGHT) ? this.x : -this.x - this.width;
+		// Draw the sprite.
 		context.drawImage(
 			this.sprite, // Image.
 			this.frameX * this.spriteWidth, // Source x.
@@ -54,8 +60,8 @@ export class Player extends PhysicsEntity {
 			this.spriteHeight, // Source height.
 			destX, // Destination x.
 			this.y, // Destination y.
-			this.getWidth(), // Destination width.
-			this.getHeight() // Destination height.
+			this.width, // Destination width.
+			this.height // Destination height.
 		);
 		this.weapon.draw(context, destX, this.y);
 		context.restore(); // Restore the previous transformation state.
@@ -78,8 +84,8 @@ export class Player extends PhysicsEntity {
 		if (this.x < 0) {
 			this.x = 0;
 		}
-		if (this.x + this.getWidth() > this.game.width) {
-			this.x = this.game.width - this.getWidth();
+		if (this.x + this.width > this.game.width) {
+			this.x = this.game.width - this.width;
 		}
 	}
 	setState(state) {
