@@ -13,7 +13,6 @@ export class GameMap {
 		this.height = level.height;
 
 		this.platforms = getTilesByType(this, TILE_TYPES.PLATFORM, Platform);
-		console.log(this);
 	}
 	draw(context) {
 		this.platforms.forEach((platform) => {

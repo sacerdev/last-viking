@@ -10,11 +10,11 @@ const STATES = {
 };
 
 const WPN_OFF = {
-	IDLE: [[23, 10], [23, 11], [23, 11], [23, 12], [23, 11]],
-	RUNNING: [[23, 10], [24, 9], [23, 10]],
-	JUMPING: [[23, 10], [23, 10]],
-	FALLING: [[23, 10], [23, 10]],
-	ATTACKING: [[22, 24], [23, 10], [23, 20]],
+	IDLE: [[46, 34], [46, 36], [46, 36], [46, 38], [46, 36]],
+	RUNNING: [[46, 34], [48, 32], [46, 34]],
+	JUMPING: [[46, 34], [46, 34]],
+	FALLING: [[46, 34], [46, 34]],
+	ATTACKING: [[46, 32], [48, 32], [46, 44]],
 };
 
 class PlayerState extends State {
@@ -24,8 +24,8 @@ class PlayerState extends State {
 	}
 	updateWeaponOffset(frame = this.player.frameX) {
 		const state = Object.keys(STATES)[this.state];
-		this.player.wpnOffX = WPN_OFF[state][frame][0] * this.player.scale;
-		this.player.wpnOffY = WPN_OFF[state][frame][1] * this.player.scale;
+		this.player.wpnOffX = WPN_OFF[state][frame][0];
+		this.player.wpnOffY = WPN_OFF[state][frame][1];
 	}
 }
 
@@ -43,11 +43,11 @@ export class IdleState extends PlayerState {
 		this.player.frameY = 0;
 		this.player.weapon.frameX = 1;
 		if (this.player.isOnGround() && !this.player.isOnPlatform) {
-			this.player.y = this.player.game.height - this.player.getHeight();
+			this.player.y = this.player.game.height - this.player.height;
 		}
 	}
 	update() {
-		this.animate();
+		//this.animate();
 		this.updateWeaponOffset();
 		this.handleInput(this.player.game.input);
 		if (this.player.veloY > 0) {
@@ -111,11 +111,11 @@ export class JumpingState extends PlayerState {
 	}
 	update() {
 		this.updateWeaponOffset();
+		handlePlatformCollision(this.player);
 		if (!this.player.isGrounded()) {
 			this.player.frameX = 1;
 		}
 		if (this.player.veloY >= 0) {
-			console.log(this.player.veloY);
 			this.player.setState(STATES.FALLING);
 		}
 	}
@@ -164,7 +164,7 @@ export class AttackingState extends PlayerState {
 		this.player.frameY = 1;
 		this.player.weapon.frameX = 0;
 		this.player.weapon.rotate = true;
-		this.updateWeaponOffset(0);
+		this.updateWeaponOffset(this.attackFrame);
 	}
 	update() {
 		this.animate();
@@ -205,23 +205,27 @@ export class AttackingState extends PlayerState {
 }
 
 function handlePlatformCollision(player) {
-	//console.log({player})
 	const map = player.game.getCurrentLevel()?.map;
 	if (map?.platforms?.length > 0) {
 		let hasCollision = false;
 		map.platforms.forEach((platform) => {
 			if (
 				collisionRec(
-					player.x, player.y, player.getWidth(), player.getHeight(),
+					player.x, player.y, player.width, player.height,
 					platform.x, platform.y, platform.width, platform.height
-				) && player.veloY >= 0
+				)
 			) {
-				if (!player.isOnPlatform) {
-					console.log('holla');
-					player.y = platform.y + 3 - player.getHeight();
+				// Check if the player is below the platform.
+				// If so, the player should fall down.
+				// If he is above the platform, he should be on top of it.
+				if (player.y + player.height > platform.y + platform.height) {
+					player.y = platform.y + platform.height;
+					player.veloY = 1;
+				} else {
+					player.y = platform.y - player.height;
+					player.veloY = 0;
 					player.isOnPlatform = true;
 				}
-				hasCollision = true;
 			}
 		});
 		if (!hasCollision) {
@@ -231,23 +235,23 @@ function handlePlatformCollision(player) {
 }
 
 function checkForAttackOnEnemy(player) {
-	const map = player.game.getCurrentLevel()?.map;
-	if (map?.enemies?.length > 0) {
-		map.enemies.forEach((enemy) => {
+	const level = player.game.getCurrentLevel();
+
+	if (level?.enemies?.length > 0) {
+		level.enemies.forEach((enemy, i) => {
 			if (
 				collisionRec(
 					player.x,
 					player.y,
-					player.getWidth(),
-					player.getHeight(),
+					player.height,
+					player.width,
 					enemy.x,
 					enemy.y,
-					enemy.getWidth(),
-					enemy.getHeight()
+					enemy.height,
+					enemy.width
 				)
 			) {
-				console.log('hit');
-				//map.removeEnemy(enemy);
+				level.enemies.splice(i, 1);
 			}
 		});
 	}
