@@ -41,6 +41,7 @@ export class Player extends PhysicsEntity {
 	update(deltaTime) {
 		this.currentState.update(deltaTime);
 		this.handleInput(this.game.input);
+		this.weapon.update(deltaTime);
 	}
 	draw(context) {
 		// Save the current transformation state.
@@ -63,7 +64,7 @@ export class Player extends PhysicsEntity {
 			this.width, // Destination width.
 			this.height // Destination height.
 		);
-		this.weapon.draw(context, destX, this.y);
+		this.weapon.draw(context);
 		context.restore(); // Restore the previous transformation state.
 	}
 	handleInput(input) {

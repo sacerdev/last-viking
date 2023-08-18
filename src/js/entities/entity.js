@@ -1,3 +1,4 @@
+import { Hitbox } from '../hitbox';
 import { Node2D } from '../node2D';
 
 export class Entity extends Node2D {
@@ -20,7 +21,7 @@ export class PhysicsEntity extends Entity {
 		this.weight = 1;
 	}
 	isOnGround() {
-		return this.y + this.getHeight() >= this.game.height;
+		return this.y + this.height >= this.game.height;
 	}
 	isGrounded() {
 		return this.isOnGround();

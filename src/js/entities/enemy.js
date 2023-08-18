@@ -3,10 +3,10 @@ import { PhysicsEntity } from './entity';
 export class Enemy extends PhysicsEntity {
 	constructor(game) {
 		super(game);
-		this.x = 32;
-		this.y = this.game.height - this.height;
 		this.width = 64;
 		this.height = 64;
+		this.x = 32;
+		this.y = this.game.height - this.height;
 		this.speed = 2;
 		this.maxSpeed = 2;
 	}

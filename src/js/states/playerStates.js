@@ -10,11 +10,11 @@ const STATES = {
 };
 
 const WPN_OFF = {
-	IDLE: [[23, 10], [23, 11], [23, 11], [23, 12], [23, 11]],
-	RUNNING: [[23, 10], [24, 9], [23, 10]],
-	JUMPING: [[23, 10], [23, 10]],
-	FALLING: [[23, 10], [23, 10]],
-	ATTACKING: [[22, 24], [23, 10], [23, 20]],
+	IDLE: [[46, 34], [46, 36], [46, 36], [46, 38], [46, 36]],
+	RUNNING: [[46, 34], [48, 32], [46, 34]],
+	JUMPING: [[46, 34], [46, 34]],
+	FALLING: [[46, 34], [46, 34]],
+	ATTACKING: [[46, 32], [48, 32], [46, 44]],
 };
 
 class PlayerState extends State {
@@ -47,7 +47,7 @@ export class IdleState extends PlayerState {
 		}
 	}
 	update() {
-		this.animate();
+		//this.animate();
 		this.updateWeaponOffset();
 		this.handleInput(this.player.game.input);
 		if (this.player.veloY > 0) {
@@ -111,6 +111,7 @@ export class JumpingState extends PlayerState {
 	}
 	update() {
 		this.updateWeaponOffset();
+		handlePlatformCollision(this.player);
 		if (!this.player.isGrounded()) {
 			this.player.frameX = 1;
 		}
@@ -163,7 +164,7 @@ export class AttackingState extends PlayerState {
 		this.player.frameY = 1;
 		this.player.weapon.frameX = 0;
 		this.player.weapon.rotate = true;
-		this.updateWeaponOffset(0);
+		this.updateWeaponOffset(this.attackFrame);
 	}
 	update() {
 		this.animate();
@@ -212,13 +213,19 @@ function handlePlatformCollision(player) {
 				collisionRec(
 					player.x, player.y, player.width, player.height,
 					platform.x, platform.y, platform.width, platform.height
-				) && player.veloY >= 0
+				)
 			) {
-				if (!player.isOnPlatform) {
-					player.y = platform.y + 3 - player.height;
+				// Check if the player is below the platform.
+				// If so, the player should fall down.
+				// If he is above the platform, he should be on top of it.
+				if (player.y + player.height > platform.y + platform.height) {
+					player.y = platform.y + platform.height;
+					player.veloY = 1;
+				} else {
+					player.y = platform.y - player.height;
+					player.veloY = 0;
 					player.isOnPlatform = true;
 				}
-				hasCollision = true;
 			}
 		});
 		if (!hasCollision) {
@@ -228,9 +235,10 @@ function handlePlatformCollision(player) {
 }
 
 function checkForAttackOnEnemy(player) {
-	const map = player.game.getCurrentLevel()?.map;
-	if (map?.enemies?.length > 0) {
-		map.enemies.forEach((enemy) => {
+	const level = player.game.getCurrentLevel();
+
+	if (level?.enemies?.length > 0) {
+		level.enemies.forEach((enemy, i) => {
 			if (
 				collisionRec(
 					player.x,
@@ -243,8 +251,7 @@ function checkForAttackOnEnemy(player) {
 					enemy.width
 				)
 			) {
-				console.log('hit');
-				//map.removeEnemy(enemy);
+				level.enemies.splice(i, 1);
 			}
 		});
 	}

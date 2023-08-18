@@ -1,4 +1,7 @@
+import { Hitbox } from '../hitbox';
 import { Entity } from './entity';
+
+
 
 export class Weapon extends Entity {
 	constructor(game, parent) {
@@ -17,33 +20,46 @@ export class Weapon extends Entity {
 		this.frameX = 0;
 		this.frameY = 0;
 		this.rotate = false;
+
+		this.hitbox = new Hitbox(this.game, this, 'fuchsia', 4, -8, 8, 16);
+		console.log(this);
 	}
-	draw(context, x, y) {
-		let drawX = x + this.parent.wpnOffX;
-		let drawY = y + this.parent.wpnOffY;
+	draw(context) {
+		let destX = (this.parent.directionH === 1) ? this.x : -this.x - this.width + this.parent.width - this.spriteWidth;
+		let destY = this.y;
 
 		context.save(); // Save the current transformation state.
-		context.strokeStyle = 'green';
 
 		if (this.rotate) {
-			context.translate(drawX, drawY);
+			context.translate(destX, destY + this.height);
 			context.rotate(Math.PI/2 * 3);
 			// Adjust the drawing coordinates
-			drawX = 0; // The rotated X coordinate
-			drawY = 0;
+			destX = 0; // The rotated X coordinate
+			destY = 0;
 		}
-		context.strokeRect(drawX, drawY, this.width, this.height);
+
+		this.hitbox.x = destX + this.hitbox.offX;
+		this.hitbox.y = destY + this.hitbox.offY;
+		this.hitbox.draw(context);
+
+		context.strokeStyle = 'green';
+		context.strokeRect(destX, destY, this.width, this.height);
 		context.drawImage(
 			this.sprite, // Image.
 			this.frameX * this.spriteWidth, // Source x.
 			this.frameY * this.spriteHeight, // Source y.
 			this.spriteWidth, // Source width.
 			this.spriteHeight, // Source height.
-			drawX, // Destination x.
-			drawY, // Destination y.
+			destX, // Destination x.
+			destY, // Destination y.
 			this.width, // Destination width.
 			this.height // Destination height.
 		);
 		context.restore(); // Restore the previous transformation state.
+	}
+	update() {
+		this.x = this.parent.x + this.parent.wpnOffX;
+		this.y = this.parent.y + this.parent.wpnOffY;
+		this.hitbox.update();
 	}
 }
