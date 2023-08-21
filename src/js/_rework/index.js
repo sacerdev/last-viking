@@ -13,6 +13,7 @@ window.addEventListener('load', () => {
 		sprites: {
 			viking: document.querySelector('#sprite--viking'),
 			weapon: document.querySelector('#sprite--weapon'),
+			tiles: document.querySelector('#sprite--tiles'),
 		}
 	};
 	//startBtn.addEventListener('click', (e) => {

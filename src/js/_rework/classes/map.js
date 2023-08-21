@@ -24,7 +24,7 @@ export class Map {
 				const type = dataRow ? dataRow[col] : null;
 
 				if (type && parseInt(type) !== 'NaN') {
-					tiles.push(new Tile(type, col * 32, row * 32, this.size));
+					tiles.push(new Tile(this, type, col * 32, row * 32, this.size));
 				}
 			}
 		}

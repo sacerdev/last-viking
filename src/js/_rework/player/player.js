@@ -39,7 +39,6 @@ export class Player extends PhysicsEntity {
 	handleTileCollision() {
 		const map = this.game.getCurrentLevel().map;
 		const collidingTiles = getCollidingTiles(this, map.tiles);
-console.log(this.standsOnTile, collidingTiles);
 		// Check if the player is below the platform.
 		// If so, the player should fall down.
 		// If he is above the platform, he should be on top of it.
