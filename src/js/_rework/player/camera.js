@@ -7,12 +7,12 @@ export class Camera {
 		this.y = this.target.y - this.height / 2 + this.target.height / 2;
 	}
 	update() {
-		this.x = this.clampX(this.target.x - this.width / 2 + this.target.width / 2);
-		this.y = this.target.y - this.height / 2 + this.target.height / 2;
-		if (this.x <= 0) {
+		const map = this.target.game.getCurrentLevel().map;
+		const inLeftBounds = map.minCol * 32 < this.target.x - (this.width / 2 - this.target.width / 2);
+		const inRightBounds = map.maxCol * 32 > this.target.x + (this.width / 2 - this.target.width / 2);
+
+		if (this.x <= 0 && inLeftBounds && inRightBounds) {
 			this.target.game.offsetX -= this.target.speed;
-		} else if (this.x >= this.target.game.width - this.width) {
-			this.target.game.offsetX += this.target.speed * -1;
 		}
 	}
 	clampX(x) {

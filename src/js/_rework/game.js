@@ -37,17 +37,16 @@ export class Game extends Base {
 		context.save();
 		context.translate(this.offsetX, this.offsetY);
 		// Draw the level.
-		//this.drawDemoTiles(context);
 		this.getCurrentLevel().draw(context);
 
 		// // Draw the entities.
 		this.needsDraw.forEach((entity) => {
-			entity.draw(context, this.offsetX, this.offsetY);
+			entity.draw(context);
 		});
 		context.restore();
 	}
 	update(deltaTime) {
-		// this.getCurrentLevel().update(deltaTime);
+		this.getCurrentLevel().update(deltaTime);
 		this.needsUpdate.forEach((entity) => {
 			entity.update(deltaTime);
 			entity?.applyGravity();
@@ -58,54 +57,6 @@ export class Game extends Base {
 			return this.levels[this.currentLevel];
 		} else {
 			return this.screens[Math.abs(this.currentLevel) - 1];
-		}
-	}
-	drawDemoTiles(context) {
-		const tileSize = 32;
-		const tiles = [
-			[1, 1, 1, 1, 1, 1, 1, 1, 1],
-			[1, 0, 0, 0, 0, 0, 0, 0, 1],
-			[1, 2, 2, 2, 2, 2, 2, 2, 1],
-			[1, 2, 0, 0, 0, 0, 0, 2, 1],
-			[1, 2, 0, 0, 0, 0, 0, 2, 1],
-			[1, 2, 0, 0, 0, 0, 0, 2, 1],
-			[1, 2, 0, 0, 0, 0, 0, 2, 1],
-			[1, 2, 0, 0, 0, 0, 0, 2, 1],
-			[1, 1, 1, 1, 1, 1, 1, 1, 1],
-		];
-
-		const repeatCount = 5;
-		const gapTiles = 4;
-		const xOffset = -tiles[0].length * 1 - 6; // Offset for tiles with x < 0
-
-		const drawTile = (col, row, color = 'red') => {
-			context.fillStyle = color;
-			context.fillRect(
-				(col + xOffset) * tileSize,
-				row * tileSize,
-				tileSize,
-				tileSize
-			);
-		};
-
-		for (let row = 0; row < tiles.length; row++) {
-			for (let repetition = 0; repetition < repeatCount; repetition++) {
-				for (let col = 0; col < tiles[row].length; col++) {
-					const tile = tiles[row][col];
-					if (tile === 1) {
-						drawTile(
-							col + (repetition * (tiles[row].length + gapTiles)),
-							row
-						);
-					} else if (tile === 2) {
-						drawTile(
-							col + (repetition * (tiles[row].length + gapTiles)),
-							row,
-							'orange'
-						);
-					}
-				}
-			}
 		}
 	}
 }

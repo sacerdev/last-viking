@@ -1,0 +1,97 @@
+addAudio() {
+		// const AudioContext = window.AudioContext || window.webkitAudioContext;
+		// const audio = new AudioContext();
+		// const player = new SoundPlayer(audio);
+
+		// player.play(440.0, 0.8, "sine").stop(0.5);
+
+		// const actx = new (AudioContext || webkitAudioContext)();
+		// const osc = actx.createOscillator();
+		// osc.type = 'sawtooth';
+		// osc.frequency.value = 440;
+		// osc.connect(actx.destination);
+		// osc.start();
+		// osc.stop(actx.currentTime + 2);
+
+		const actx = new (AudioContext || webkitAudioContext)();
+
+		const FREQS = {
+			'0': 0,
+			'A': 440,
+			'B': 493.88,
+			'C#': 554.37,
+			'D': 587.33,
+			'E': 659.25,
+			'F#': 739.99
+		}
+
+		const playNote = ([frequency, duration], startTime, speed = 1) => {
+			console.log({startTime});
+			const osc = actx.createOscillator();
+			osc.type = 'sawtooth';
+			osc.frequency.value = FREQS[frequency];
+			osc.connect(actx.destination);
+
+			// Schedule the note to start at the specified start time
+			osc.start(startTime * speed);
+
+			// Schedule the note to stop after the specified duration
+			osc.stop((startTime + duration / 1000) * speed);
+		}
+
+		const notes = [
+			['B', 250], ['B', 250], ['C#', 500], ['D', 250], ['D', 250], ['E', 250],
+			['C#', 500], ['B', 250], ['A', 250], ['E', 500], ['E', 250], ['F#', 250],
+			['E', 250], ['D', 250], ['D', 250], ['C#', 250], ['B', 250], ['A', 250],
+			['D', 500], ['E', 500], ['F#', 500], ['D', 500], ['E', 500], ['E', 500],
+			['E', 500], ['F#', 500], ['E', 500], ['A', 500], ['B', 500], ['C#', 250],
+			['D', 250], ['B', 250], ['E', 500], ['F#', 500], ['E', 500], ['A', 250],
+			['B', 250], ['D', 500], ['B', 250], ['F#', 250], ['F#', 250], ['E', 250],
+			['A', 250], ['B', 250], ['D', 500], ['B', 250], ['D', 250], ['E', 250],
+			['C#', 250], ['A', 250], ['A', 250], ['E', 250], ['D', 250]
+		];
+
+		let currentTime = actx.currentTime;
+
+		for (const note of notes) {
+			const [frequency, duration] = note;
+			playNote([frequency, duration], currentTime, 0.75);
+			currentTime += duration / 1000; // Update the current time for scheduling the next note
+		}
+	}
+
+
+import { Game } from './game';
+
+window.addEventListener('load', () => {
+	const startBtn = document.querySelector('#game--last-viking--start');
+	const canvas = document.querySelector('#game--last-viking');
+	const ctx = canvas.getContext('2d');
+
+	canvas.width = 960;
+	canvas.height = 544;
+	ctx.imageSmoothingEnabled = false;
+
+	const assets = {
+		sprites: {
+			viking: document.querySelector('#sprite--viking'),
+			weapon: document.querySelector('#sprite--weapon'),
+		}
+	};
+	startBtn.addEventListener('click', (e) => {
+		e.target.remove();
+		const game = new Game(canvas.width, canvas.height, assets);
+		let lastTime = 0;
+		function gameLoop(time) {
+			const deltaTime = time - lastTime;
+			lastTime = time;
+			game.update(deltaTime);
+			game.draw(ctx);
+			requestAnimationFrame(gameLoop);
+		}
+		gameLoop(0);
+	});
+});
+
+
+<button id="game--last-viking--start">Start</button>

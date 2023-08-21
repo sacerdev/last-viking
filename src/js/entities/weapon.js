@@ -22,7 +22,6 @@ export class Weapon extends Entity {
 		this.rotate = false;
 
 		this.hitbox = new Hitbox(this.game, this, 'fuchsia', 4, -8, 8, 16);
-		console.log(this);
 	}
 	draw(context) {
 		let destX = (this.parent.directionH === 1) ? this.x : -this.x - this.width + this.parent.width - this.spriteWidth;

@@ -11,7 +11,7 @@ module.exports = (env, options) => {
   return {
     mode: options.mode,
     entry: {
-      index: './src/js/rework/index.js',
+      index: './src/js/_rework/index.js',
     },
     output: {
       filename: 'game.js',

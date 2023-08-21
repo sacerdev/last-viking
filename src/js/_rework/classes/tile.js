@@ -18,7 +18,10 @@ export class Tile {
 		this.width = width;
 		this.height = height || width;
 	}
-	update() {}
+	update() {
+		this.x += this.level.game.offsetX;
+		this.y += this.level.game.offsetY;
+	}
 	draw(context) {
 		context.fillStyle = TILE_TYPE_COLORS[this.type] || 'fuchsia';
 		context.fillRect(this.x, this.y, this.width, this.height);

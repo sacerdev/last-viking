@@ -6,6 +6,5 @@ export class Level extends Base {
 		this.game = game;
 		this.index = index;
 		this.map = null;
-		console.log({ level: this});
 	}
 }
