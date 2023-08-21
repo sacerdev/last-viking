@@ -20,7 +20,11 @@ export class IdleState extends PlayerState {
 	}
 	enter() {
 		console.log('enter idle', this.player);
+		this.player.veloY = 0;
 		this.player.color = 'blue';
+		if (this.player.isOnGround() && !this.player.standsOnTile) {
+			this.player.y = this.player.game.height - this.player.height;
+		}
 	}
 	update() {
 		this.handleInput(this.player.game.input);
@@ -62,8 +66,9 @@ export class JumpingState extends PlayerState {
 	enter() {
 		console.log('enter jumping', this.player);
 		if (this.player.isGrounded()) {
-			this.player.veloY -= 20;
 			this.standsOnTile = false;
+			this.player.veloY -= 20;
+			this.player.y -= 2;
 		}
 		this.player.color = 'green';
 	}

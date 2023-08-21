@@ -43,12 +43,14 @@ console.log(this.standsOnTile, collidingTiles);
 		// Check if the player is below the platform.
 		// If so, the player should fall down.
 		// If he is above the platform, he should be on top of it.
-		collidingTiles.forEach((tile) => {
-			maybeLandOnTile(this, tile);
-		})
 		if (collidingTiles.length === 0) {
 			this.standsOnTile = false;
+		} else {
+			collidingTiles.forEach((tile) => {
+				maybeLandOnTile(this, tile);
+			})
 		}
+
 	}
 	updateCurrentState() {
 		this.currentState.update();

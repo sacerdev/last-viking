@@ -225,6 +225,7 @@ function handlePlatformCollision(player) {
 					player.y = platform.y - player.height;
 					player.veloY = 0;
 					player.isOnPlatform = true;
+					hasCollision = true;
 				}
 			}
 		});
