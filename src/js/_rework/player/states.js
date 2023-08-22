@@ -5,12 +5,20 @@ const STATES = {
 	RUNNING: 1,
 	JUMPING: 2,
 	FALLING: 3,
+	ATTACKING: 1,
 };
 
 class PlayerState extends State {
 	constructor(state, player) {
 		super(state);
 		this.player = player;
+	}
+}
+
+class WeaponState extends State {
+	constructor(state, weapon) {
+		super(state);
+		this.weapon = weapon;
 	}
 }
 
@@ -23,6 +31,7 @@ export class IdleState extends PlayerState {
 		this.player.veloY = 0;
 		this.player.color = 'blue';
 		this.player.animator.play('IDLE');
+		this.player.weapon.animator.play('IDLE');
 	}
 	update() {
 		this.handleInput(this.player.game.input);
@@ -46,6 +55,7 @@ export class RunningState extends PlayerState {
 		console.log('enter running', this.player);
 		this.player.color = 'purple';
 		this.player.animator.play('RUNNING');
+		this.player.weapon.animator.play('RUNNING');
 	}
 	update() {
 		this.handleInput(this.player.game.input);
@@ -74,6 +84,7 @@ export class JumpingState extends PlayerState {
 		}
 		this.player.color = 'green';
 		this.player.animator.play('JUMPING');
+		this.player.weapon.animator.play('JUMPING');
 		console.log(this.player);
 	}
 	update() {
@@ -92,11 +103,49 @@ export class FallingState extends PlayerState {
 		console.log('enter falling', this.player);
 		this.player.color = 'lime';
 		this.player.animator.play('FALLING');
+		this.player.weapon.animator.play('FALLING');
 	}
 	update() {
 		handleHorizontalMovement(this.player, this.player.game.input);
 		if (this.player.isGrounded()) {
 			this.player.setState(STATES.IDLE);
+		}
+	}
+}
+
+export class IdleWeaponState extends WeaponState {
+	constructor(weapon) {
+		super(STATES.IDLE, weapon);
+	}
+	enter() {
+		console.log('enter weapon idle', this.weapon);
+		this.weapon.frameX = 1;
+		this.weapon.rotate = false;
+		this.weapon.isAttacking = false;
+	}
+	update() {
+		this.handleInput(this.weapon.parent.game.input);
+	}
+	handleInput(input) {
+		if (attacks(input.keys)) {
+			this.weapon.setState(STATES.ATTACKING);
+		}
+	}
+}
+
+export class AttackingWeaponState extends WeaponState {
+	constructor(weapon) {
+		super(STATES.ATTACKING, weapon);
+	}
+	enter() {
+		console.log('enter weapon attacking', this.weapon);
+		this.weapon.frameX = 0;
+		this.weapon.rotate = true;
+		this.weapon.isAttacking = true;
+	}
+	update() {
+		if (!this.weapon.isAttacking) {
+			this.weapon.setState(STATES.IDLE);
 		}
 	}
 }
@@ -110,6 +159,10 @@ function movesHorizontal(keys) {
 
 function jumps(keys) {
 	return keys.includes('ArrowUp');
+}
+
+function attacks(keys) {
+	return keys.includes(' ');
 }
 
 function handleHorizontalMovement(entity, input) {

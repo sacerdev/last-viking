@@ -3,6 +3,7 @@ import { getCollidingTiles, maybeLandOnTile } from '../utils';
 import { PlayerAnimator } from './animator';
 import { Camera } from './camera';
 import { FallingState, IdleState, JumpingState, RunningState } from './states';
+import { Weapon } from './weapon';
 
 export class Player extends PhysicsEntity {
 	constructor(game) {
@@ -23,6 +24,7 @@ export class Player extends PhysicsEntity {
 
 		this.color = 'blue';
 
+		this.weapon = new Weapon(this);
 		this.camera = new Camera(this, this.game.width, this.game.height);
 		this.states = [
 			new IdleState(this),
@@ -37,6 +39,7 @@ export class Player extends PhysicsEntity {
 	}
 	draw(context) {
 		this.drawPlayer(context);
+		this.weapon.draw(context);
 	}
 	drawPlayer(context) {
 		context.save();
@@ -60,8 +63,9 @@ export class Player extends PhysicsEntity {
 	update(deltaTime) {
 		this.handleTileCollision();
 		this.currentState.update(deltaTime);
-		this.camera.update();
+		this.camera.update(deltaTime);
 		this.animator.update(deltaTime);
+		this.weapon.update(deltaTime);
 	}
 	handleTileCollision() {
 		const map = this.game.getCurrentLevel().map;
@@ -77,10 +81,6 @@ export class Player extends PhysicsEntity {
 			})
 		}
 
-	}
-	setState(state) {
-		this.currentState = this.states[state];
-		this.currentState.enter();
 	}
 	isGrounded() {
 		return this.standsOnTile || this.isOnGround();

@@ -9,6 +9,11 @@ export class Entity extends Base {
 		this.x = 0;
 		this.y = 0;
 	}
+	setState(state) {
+		console.log(this, state);
+		this.currentState = this.states[state];
+		this.currentState.enter();
+	}
 }
 
 export class PhysicsEntity extends Entity {
