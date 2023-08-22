@@ -1,6 +1,6 @@
 import { PhysicsEntity } from './entities';
 
-export class Enenmy extends PhysicsEntity {
+export class Enemy extends PhysicsEntity {
 	constructor(game, x, y, w = 64, h = 64) {
 		super(game);
 		this.width = w;
@@ -14,14 +14,11 @@ export class Enenmy extends PhysicsEntity {
 		context.fillStyle = 'orange';
 		context.fillRect(this.x, this.y, this.width, this.height);
 	}
-	update() {
-		this.updateXAxis();
-	}
-	updateXAxis() {
+	patrol(maxLeft, maxRight) {
 		this.x += this.speed;
-		if (this.x + this.width >= this.game.width / 3) {
+		if (this.x + this.width >= maxRight) {
 			this.speed = -this.maxSpeed;
-		} else if (this.x <= 32) {
+		} else if (this.x <= maxLeft) {
 			this.speed = this.maxSpeed;
 		}
 	}

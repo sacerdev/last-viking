@@ -67,22 +67,4 @@ export class Player extends PhysicsEntity {
 		this.animator.update(deltaTime);
 		this.weapon.update(deltaTime);
 	}
-	handleTileCollision() {
-		const map = this.game.getCurrentLevel().map;
-		const collidingTiles = getCollidingTiles(this, map.tiles);
-		// Check if the player is below the platform.
-		// If so, the player should fall down.
-		// If he is above the platform, he should be on top of it.
-		if (collidingTiles.length === 0) {
-			this.standsOnTile = false;
-		} else {
-			collidingTiles.forEach((tile) => {
-				maybeLandOnTile(this, tile);
-			})
-		}
-
-	}
-	isGrounded() {
-		return this.standsOnTile || this.isOnGround();
-	}
 }

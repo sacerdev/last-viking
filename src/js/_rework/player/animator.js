@@ -16,7 +16,7 @@ export class PlayerAnimator extends Animator {
 				startFrameX: 0,
 				startFrameY: 1,
 				maxFrame: 2,
-				fps: 16,
+				fps: 4 * this.parent.maxSpeed,
 				loop: true,
 			},
 			JUMPING: {
@@ -60,7 +60,6 @@ export class WeaponAnimator extends Animator {
 		if (this.weapon.isAttacking) {
 			this.playAttack(deltaTime);
 		}
-		console.log(this.attackFrame);
 	}
 	getOffset() {
 		return this.offsets[Object.keys(this.offsets)[this.currentOffset]];

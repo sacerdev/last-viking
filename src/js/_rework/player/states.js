@@ -27,7 +27,6 @@ export class IdleState extends PlayerState {
 		super(STATES.IDLE, player);
 	}
 	enter() {
-		console.log('enter idle', this.player);
 		this.player.veloY = 0;
 		this.player.color = 'blue';
 		this.player.animator.play('IDLE');
@@ -52,7 +51,6 @@ export class RunningState extends PlayerState {
 		super(STATES.RUNNING, player);
 	}
 	enter() {
-		console.log('enter running', this.player);
 		this.player.color = 'purple';
 		this.player.animator.play('RUNNING');
 		this.player.weapon.animator.play('RUNNING');
@@ -77,7 +75,6 @@ export class JumpingState extends PlayerState {
 		super(STATES.JUMPING, player);
 	}
 	enter() {
-		console.log('enter jumping', this.player, this.player.isGrounded());
 		if (this.player.isGrounded()) {
 			this.player.standsOnTile = false;
 			this.player.veloY -= 20;
@@ -85,7 +82,6 @@ export class JumpingState extends PlayerState {
 		this.player.color = 'green';
 		this.player.animator.play('JUMPING');
 		this.player.weapon.animator.play('JUMPING');
-		console.log(this.player);
 	}
 	update() {
 		handleHorizontalMovement(this.player, this.player.game.input);
@@ -100,7 +96,6 @@ export class FallingState extends PlayerState {
 		super(STATES.FALLING, player);
 	}
 	enter() {
-		console.log('enter falling', this.player);
 		this.player.color = 'lime';
 		this.player.animator.play('FALLING');
 		this.player.weapon.animator.play('FALLING');
@@ -118,7 +113,6 @@ export class IdleWeaponState extends WeaponState {
 		super(STATES.IDLE, weapon);
 	}
 	enter() {
-		console.log('enter weapon idle', this.weapon);
 		this.weapon.frameX = 1;
 		this.weapon.rotate = false;
 		this.weapon.isAttacking = false;
@@ -138,7 +132,6 @@ export class AttackingWeaponState extends WeaponState {
 		super(STATES.ATTACKING, weapon);
 	}
 	enter() {
-		console.log('enter weapon attacking', this.weapon);
 		this.weapon.frameX = 0;
 		this.weapon.rotate = true;
 		this.weapon.isAttacking = true;
