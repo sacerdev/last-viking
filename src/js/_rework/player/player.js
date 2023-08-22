@@ -1,5 +1,6 @@
 import { PhysicsEntity } from '../classes/entities';
 import { getCollidingTiles, maybeLandOnTile } from '../utils';
+import { PlayerAnimator } from './animator';
 import { Camera } from './camera';
 import { FallingState, IdleState, JumpingState, RunningState } from './states';
 
@@ -11,6 +12,15 @@ export class Player extends PhysicsEntity {
 		this.x = this.game.width / 2 - this.width / 2;
 		this.y = this.game.height / 2 - this.height;
 
+		this.directionH = 1;
+
+		this.sprite = game.assets.sprites.viking;
+		this.spriteWidth = 32;
+		this.spriteHeight = 32;
+		this.frameX = 0;
+		this.frameY = 0;
+		this.animator = new PlayerAnimator(this);
+
 		this.color = 'blue';
 
 		this.camera = new Camera(this, this.game.width, this.game.height);
@@ -21,6 +31,7 @@ export class Player extends PhysicsEntity {
 			new FallingState(this),
 		];
 		this.currentState = this.states[0];
+		this.currentState.enter();
 
 		this.standsOnTile = false;
 	}
@@ -28,13 +39,29 @@ export class Player extends PhysicsEntity {
 		this.drawPlayer(context);
 	}
 	drawPlayer(context) {
-		context.fillStyle = this.color;
-		context.fillRect(this.x, this.y, this.width, this.height);
+		context.save();
+		context.strokeStyle = this.color;
+		context.strokeRect(this.x, this.y, this.width, this.height);
+		context.scale(this.directionH, 1);
+		const destX = this.directionH === 1 ? this.x : -this.x - this.width;
+		context.drawImage(
+			this.sprite, // Image.
+			this.frameX * this.spriteWidth, // Source x.
+			this.frameY * this.spriteHeight, // Source y.
+			this.spriteWidth, // Source width.
+			this.spriteHeight, // Source height.
+			destX, // Destination x.
+			this.y, // Destination y.
+			this.width, // Destination width.
+			this.height // Destination height.
+		);
+		context.restore();
 	}
-	update() {
-		this.updateCurrentState();
+	update(deltaTime) {
 		this.handleTileCollision();
-		this.updateChildren();
+		this.currentState.update(deltaTime);
+		this.camera.update();
+		this.animator.update(deltaTime);
 	}
 	handleTileCollision() {
 		const map = this.game.getCurrentLevel().map;
@@ -50,12 +77,6 @@ export class Player extends PhysicsEntity {
 			})
 		}
 
-	}
-	updateCurrentState() {
-		this.currentState.update();
-	}
-	updateChildren() {
-		this.camera.update();
 	}
 	setState(state) {
 		this.currentState = this.states[state];

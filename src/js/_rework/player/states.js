@@ -22,9 +22,7 @@ export class IdleState extends PlayerState {
 		console.log('enter idle', this.player);
 		this.player.veloY = 0;
 		this.player.color = 'blue';
-		if (this.player.isOnGround() && !this.player.standsOnTile) {
-			this.player.y = this.player.game.height - this.player.height;
-		}
+		this.player.animator.play('IDLE');
 	}
 	update() {
 		this.handleInput(this.player.game.input);
@@ -34,6 +32,8 @@ export class IdleState extends PlayerState {
 			this.player.setState(STATES.RUNNING);
 		} else if (jumps(input.keys)) {
 			this.player.setState(STATES.JUMPING);
+		} else if (!this.player.isGrounded()) {
+			this.player.setState(STATES.FALLING);
 		}
 	}
 }
@@ -45,6 +45,7 @@ export class RunningState extends PlayerState {
 	enter() {
 		console.log('enter running', this.player);
 		this.player.color = 'purple';
+		this.player.animator.play('RUNNING');
 	}
 	update() {
 		this.handleInput(this.player.game.input);
@@ -55,6 +56,8 @@ export class RunningState extends PlayerState {
 			this.player.setState(STATES.IDLE);
 		} else if (jumps(input.keys)) {
 			this.player.setState(STATES.JUMPING);
+		} else if (!this.player.isGrounded()) {
+			this.player.setState(STATES.FALLING);
 		}
 	}
 }
@@ -64,13 +67,15 @@ export class JumpingState extends PlayerState {
 		super(STATES.JUMPING, player);
 	}
 	enter() {
-		console.log('enter jumping', this.player);
+		console.log('enter jumping', this.player, this.player.isGrounded());
 		if (this.player.isGrounded()) {
-			this.standsOnTile = false;
+			this.player.standsOnTile = false;
 			this.player.veloY -= 20;
-			this.player.y -= 2;
+			this.player.y -= 20;
 		}
 		this.player.color = 'green';
+		this.player.animator.play('JUMPING');
+		console.log(this.player);
 	}
 	update() {
 		handleHorizontalMovement(this.player, this.player.game.input);
@@ -88,6 +93,7 @@ export class FallingState extends PlayerState {
 	enter() {
 		console.log('enter falling', this.player);
 		this.player.color = 'lime';
+		this.player.animator.play('FALLING');
 	}
 	update() {
 		handleHorizontalMovement(this.player, this.player.game.input);
@@ -114,8 +120,10 @@ function handleHorizontalMovement(entity, input) {
 	entity.x += entity.speed;
 	if (input.keys.includes('ArrowRight') && entity.x < map.maxCol * 32) {
 		entity.speed = entity.maxSpeed;
+		entity.directionH = 1;
 	} else if (input.keys.includes('ArrowLeft') && entity.x > map.minCol * 32) {
 		entity.speed = -entity.maxSpeed;
+		entity.directionH = -1;
 	} else {
 		entity.speed = 0;
 	}
