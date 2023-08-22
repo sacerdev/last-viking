@@ -71,7 +71,6 @@ export class JumpingState extends PlayerState {
 		if (this.player.isGrounded()) {
 			this.player.standsOnTile = false;
 			this.player.veloY -= 20;
-			this.player.y -= 20;
 		}
 		this.player.color = 'green';
 		this.player.animator.play('JUMPING');
@@ -83,7 +82,6 @@ export class JumpingState extends PlayerState {
 			this.player.setState(STATES.FALLING);
 		}
 	}
-	handleInput(input) {}
 }
 
 export class FallingState extends PlayerState {
@@ -101,7 +99,6 @@ export class FallingState extends PlayerState {
 			this.player.setState(STATES.IDLE);
 		}
 	}
-	handleInput(input) {}
 }
 
 /*

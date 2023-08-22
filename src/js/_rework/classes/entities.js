@@ -20,7 +20,6 @@ export class PhysicsEntity extends Entity {
 		this.veloY = 0;
 		this.weight = 1;
 	}
-	// TODO: Replace with collision detection + tilemap.
 	isOnGround() {
 		const isOnGround = this.y + this.height >= this.game.height;
 		if (isOnGround) {

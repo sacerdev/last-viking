@@ -31,10 +31,11 @@ export class Animator extends Base {
 		}
 	}
 	play(key) {
-		console.log(key);
 		this.frameTimer = 0;
 		this.currentAnimation = this.animations[key] || null;
-		this.parent.frameX = this.currentAnimation.startFrameX;
-		this.parent.frameY = this.currentAnimation.startFrameY;
+		if (this.currentAnimation !== null) {
+			this.parent.frameX = this.currentAnimation.startFrameX;
+			this.parent.frameY = this.currentAnimation.startFrameY;
+		}
 	}
 }
