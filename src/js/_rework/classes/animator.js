@@ -30,9 +30,9 @@ export class Animator extends Base {
 			}
 		}
 	}
-	play(key) {
+	play(index) {
 		this.frameTimer = 0;
-		this.currentAnimation = this.animations[key] || null;
+		this.currentAnimation = this.animations[index] || null;
 		if (this.currentAnimation !== null) {
 			this.parent.frameX = this.currentAnimation.startFrameX;
 			this.parent.frameY = this.currentAnimation.startFrameY;

@@ -65,10 +65,11 @@ export class WeaponAnimator extends Animator {
 		return this.offsets[Object.keys(this.offsets)[this.currentOffset]];
 	}
 	play(state) {
-		if (state === 'ATTACKING') {
+		if (state === 4) { // Attacking.
 			this.isAttacking = true;
+			this.currentOffset = 1;
 		}
-		this.currentOffset = Object.keys(this.offsets).indexOf(state);
+		this.currentOffset = state;//Object.keys(this.offsets).indexOf(state);
 	}
 	playAttack(deltaTime) {
 		if (this.attackTimer > 1000 / 10) {
