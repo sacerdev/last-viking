@@ -9,6 +9,8 @@ export class Enemy extends PhysicsEntity {
 		this.y = y || 32;
 		this.speed = 2;
 		this.maxSpeed = 2;
+		this.wasHit = false;
+		this.isDead = false;
 	}
 	draw(context) {
 		context.fillStyle = 'orange';
@@ -21,5 +23,8 @@ export class Enemy extends PhysicsEntity {
 		} else if (this.x <= maxLeft) {
 			this.speed = this.maxSpeed;
 		}
+	}
+	handleHit() {
+		this.wasHit = true;
 	}
 }

@@ -7,21 +7,21 @@ export function collisionRect(x1, y1, w1, h1, x2, y2, w2, h2) {
 	);
 }
 
-export function getCollidingTiles(entity, tiles) {
-	const collidingTiles = [];
-	if (tiles.length > 0) {
-		tiles.forEach((tile) => {
+export function getCollidingObjects(entity, objects) {
+	const collidingObjects = [];
+	if (objects.length > 0) {
+		objects.forEach((obj) => {
 			if (
 				collisionRect(
 					entity.x, entity.y, entity.width, entity.height,
-					tile.x, tile.y, tile.width, tile.height
+					obj.x, obj.y, obj.width, obj.height
 				)
 			) {
-				collidingTiles.push(tile);
+				collidingObjects.push(obj);
 			}
 		});
 	}
-	return collidingTiles;
+	return collidingObjects;
 }
 
 export function maybeLandOnTile (entity, tile) {

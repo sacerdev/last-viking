@@ -33,7 +33,7 @@ export class IdleState extends PlayerState {
 	enter() {
 		this.player.veloY = 0;
 		this.player.color = 'blue';
-		this.player.animator.play(STATES.IDLE);
+		this.player.animator.play('IDLE');
 		this.player.weapon.animator.play(STATES.IDLE);
 	}
 	update() {
@@ -56,7 +56,7 @@ export class RunningState extends PlayerState {
 	}
 	enter() {
 		this.player.color = 'purple';
-		this.player.animator.play(STATES.RUNNING);
+		this.player.animator.play('RUNNING');
 		this.player.weapon.animator.play(STATES.RUNNING);
 	}
 	update() {
@@ -84,7 +84,7 @@ export class JumpingState extends PlayerState {
 			this.player.veloY -= 20;
 		}
 		this.player.color = 'green';
-		this.player.animator.play(STATES.JUMPING);
+		this.player.animator.play('JUMPING');
 		this.player.weapon.animator.play(STATES.JUMPING);
 	}
 	update() {
@@ -101,7 +101,7 @@ export class FallingState extends PlayerState {
 	}
 	enter() {
 		this.player.color = 'lime';
-		this.player.animator.play(STATES.FALLING);
+		this.player.animator.play('FALLING');
 		this.player.weapon.animator.play(STATES.FALLING);
 	}
 	update() {

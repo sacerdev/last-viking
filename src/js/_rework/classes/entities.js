@@ -1,4 +1,4 @@
-import { getCollidingTiles, maybeLandOnTile } from '../utils';
+import { getCollidingObjects, maybeLandOnTile } from '../utils';
 import { Base } from './base';
 
 export class Entity extends Base {
@@ -46,7 +46,7 @@ export class PhysicsEntity extends Entity {
 	}
 	handleTileCollision() {
 		const map = this.game.getCurrentLevel().map;
-		const collidingTiles = getCollidingTiles(this, map.tiles);
+		const collidingTiles = getCollidingObjects(this, map.tiles);
 		// Check if the player is below the platform.
 		// If so, the player should fall down.
 		// If he is above the platform, he should be on top of it.
@@ -57,6 +57,41 @@ export class PhysicsEntity extends Entity {
 				maybeLandOnTile(this, tile);
 			})
 		}
-
+	}
+	handleEnemyCollision() {
+		const level = this.game.getCurrentLevel();
+		const enemies = level.enemies;
+		let collidingEnemies = [];
+		if (this?.weapon?.isAttacking) {
+			const weapon = {
+				x: this.weapon.x - 12,
+				width: this.weapon.width + 24,
+				height: this.weapon.height,
+			};
+			collidingEnemies = getCollidingObjects(this,
+				enemies
+			);
+			collidingEnemies.forEach((enemy) => {
+				if (this.directionH === 1 && enemy.x < this.x) {
+					enemy.handleHit();
+				} else if (this.directionH === -1 && enemy.x > this.x) {
+					enemy.handleHit();
+				}
+			});
+		} else {
+			const player = {
+				x: this.x,
+				y: this.y,
+				width: this.width - 16,
+				height: this.height
+			};
+			if (this.directionH === -1) {
+				player.x += 16;
+			}
+			collidingEnemies = getCollidingObjects(player, enemies);
+			if (collidingEnemies.length > 0) {
+				this.handleHit();
+			}
+		}
 	}
 }

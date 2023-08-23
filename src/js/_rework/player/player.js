@@ -1,5 +1,5 @@
 import { PhysicsEntity } from '../classes/entities';
-import { getCollidingTiles, maybeLandOnTile } from '../utils';
+import { getCollidingObjects, maybeLandOnTile } from '../utils';
 import { PlayerAnimator } from './animator';
 import { Camera } from './camera';
 import { FallingState, IdleState, JumpingState, RunningState } from './states';
@@ -43,8 +43,6 @@ export class Player extends PhysicsEntity {
 	}
 	drawPlayer(context) {
 		context.save();
-		context.strokeStyle = this.color;
-		context.strokeRect(this.x, this.y, this.width, this.height);
 		context.scale(this.directionH, 1);
 		const destX = this.directionH === 1 ? this.x : -this.x - this.width;
 		context.drawImage(
@@ -62,9 +60,13 @@ export class Player extends PhysicsEntity {
 	}
 	update(deltaTime) {
 		this.handleTileCollision();
+		this.handleEnemyCollision();
 		this.currentState.update(deltaTime);
 		this.camera.update(deltaTime);
 		this.animator.update(deltaTime);
 		this.weapon.update(deltaTime);
+	}
+	handleHit() {
+		console.log('player got hit');
 	}
 }

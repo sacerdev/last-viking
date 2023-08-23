@@ -32,6 +32,7 @@ export class Animator extends Base {
 	}
 	play(index) {
 		this.frameTimer = 0;
+		console.log(this.animations);
 		this.currentAnimation = this.animations[index] || null;
 		if (this.currentAnimation !== null) {
 			this.parent.frameX = this.currentAnimation.startFrameX;

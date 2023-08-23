@@ -21,7 +21,7 @@ export class Enemy1 extends Enemy {
 		this.states = [
 			new IdleState(this),
 			new RunningState(this),
-			// new HitState(this),
+			new HitState(this),
 		];
 
 		this.currentState = this.states[1];
@@ -45,9 +45,11 @@ export class Enemy1 extends Enemy {
 		context.restore();
 	}
 	update(deltaTime) {
-		this.patrol(32, this.game.width / 3);
+		if (!this.wasHit) {
+			this.patrol(32, this.game.width / 3);
+			this.animator.update(deltaTime);
+		}
 		this.currentState.update(deltaTime);
-		this.animator.update(deltaTime);
 	}
 }
 
@@ -69,14 +71,17 @@ class EnemyAnimator extends Animator {
 				fps: 4 * this.parent.maxSpeed,
 				loop: true,
 			},
-			HIT: {
-				startFrameX: 0,
-				startFrameY: 3,
-				maxFrame: 0,
-				fps: 0,
-				loop: false,
-			},
 		};
+		this.playedHit = false;
+		this.hitDistance = 128;
+	}
+	playHit() {
+		if (this.hitDistance < 0) {
+			this.playedHit = true;
+		}
+		const deltaX = this.parent.maxSpeed * 2 * this.parent.hitDirection;
+		this.parent.x += deltaX;
+		this.hitDistance -= Math.abs(deltaX);
 	}
 }
 
@@ -101,7 +106,11 @@ class IdleState extends EnemyState {
 	enter() {
 		this.parent.animator.play('IDLE');
 	}
-	update(deltaTime) {}
+	update(deltaTime) {
+		if (this.parent.wasHit) {
+			this.parent.setState(STATES.HIT);
+		}
+	}
 }
 
 class RunningState extends EnemyState {
@@ -110,6 +119,28 @@ class RunningState extends EnemyState {
 	}
 	enter() {
 		this.parent.animator.play('RUNNING');
+		console.log(this);
 	}
-	update(deltaTime) {}
+	update(deltaTime) {
+		if (this.parent.wasHit) {
+			this.parent.setState(STATES.HIT);
+		}
+	}
+}
+
+class HitState extends EnemyState {
+	constructor(parent) {
+		super(STATES.HIT, parent);
+	}
+	enter() {
+		this.parent.frameX = 0;
+		this.parent.frameY = 2;
+		this.parent.hitDirection = this.parent.game.player.x > this.parent.x ? 1 : -1;
+	}
+	update(deltaTime) {
+		if (this.parent.animator.playedHit) {
+			this.parent.isDead = true;
+		}
+		this.parent.animator.playHit();
+	}
 }

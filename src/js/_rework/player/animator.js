@@ -72,7 +72,7 @@ export class WeaponAnimator extends Animator {
 		this.currentOffset = state;//Object.keys(this.offsets).indexOf(state);
 	}
 	playAttack(deltaTime) {
-		if (this.attackTimer > 1000 / 10) {
+		if (this.attackTimer > 1000 / 30) {
 			if (this.attackFrame === 1) {
 				this.weapon.frameX = 1;
 				this.weapon.rotate = false;

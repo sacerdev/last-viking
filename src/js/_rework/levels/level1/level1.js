@@ -19,6 +19,7 @@ export class Level1 extends Level {
 		});
 	}
 	update(deltaTime) {
+		this.enemies = this.enemies.filter((enemy) => !enemy.isDead);
 		this.enemies.forEach((enemy) => {
 			enemy.update(deltaTime);
 		});
