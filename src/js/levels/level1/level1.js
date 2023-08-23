@@ -1,6 +1,6 @@
-import { Enemy } from '../../entities/enemy';
-import { Level } from '../level';
-import{ GameMap } from './map.js';
+import { Level } from '../../classes/level';
+import { Enemy1 } from '../../enemies/enemy1';
+import{ GameMap } from './map';
 
 export class Level1 extends Level {
 	constructor(game) {
@@ -9,7 +9,7 @@ export class Level1 extends Level {
 		this.height = game.height;
 		this.map = new GameMap(this);
 		this.enemies = [
-			new Enemy(this.game),
+			new Enemy1(this.game, 32, this.game.height - 64),
 		]
 	}
 	draw(context) {
@@ -18,9 +18,10 @@ export class Level1 extends Level {
 			enemy.draw(context);
 		});
 	}
-	update() {
+	update(deltaTime) {
+		this.enemies = this.enemies.filter((enemy) => !enemy.isDead);
 		this.enemies.forEach((enemy) => {
-			enemy.update();
+			enemy.update(deltaTime);
 		});
 	}
 }
