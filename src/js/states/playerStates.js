@@ -37,7 +37,6 @@ export class IdleState extends PlayerState {
 	}
 	enter() {
 		handlePlatformCollision(this.player);
-		console.log('enter idle', this.player, this.player.isOnGround() && !this.player.isOnPlatform);
 		this.player.veloY = 0;
 		this.player.frameX = 0;
 		this.player.frameY = 0;
@@ -72,7 +71,6 @@ export class RunningState extends PlayerState {
 		this.animDelay = 4;
 	}
 	enter() {
-		console.log('enter running', this.player);
 		this.player.frameX = 0;
 		this.player.frameY = 1;
 	}
@@ -99,7 +97,6 @@ export class JumpingState extends PlayerState {
 		super(STATES.JUMPING, player);
 	}
 	enter() {
-		console.log('enter jumping', this.player);
 		if (this.player.isGrounded()) {
 			this.player.isOnPlatform = false;
 			this.player.veloY -= 20;
@@ -131,7 +128,6 @@ export class FallingState extends PlayerState {
 		super(STATES.FALLING, player);
 	}
 	enter() {
-		console.log('enter falling', this.player.veloY, this.player);
 		this.player.frameX = 1;
 		this.player.frameY = 2;
 	}
@@ -158,7 +154,6 @@ export class AttackingState extends PlayerState {
 		this.animCount = 1;
 	}
 	enter() {
-		console.log('enter attacking', this.player);
 		this.attackFrame = 0;
 		this.player.frameX = 0;
 		this.player.frameY = 1;
@@ -225,6 +220,7 @@ function handlePlatformCollision(player) {
 					player.y = platform.y - player.height;
 					player.veloY = 0;
 					player.isOnPlatform = true;
+					hasCollision = true;
 				}
 			}
 		});

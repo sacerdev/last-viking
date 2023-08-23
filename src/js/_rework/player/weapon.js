@@ -1,34 +1,38 @@
-import { Hitbox } from '../hitbox';
-import { Entity } from './entity';
-
-
+import { Entity } from '../classes/entities';
+import { WeaponAnimator } from './animator';
+import { AttackingWeaponState, IdleWeaponState } from './states';
 
 export class Weapon extends Entity {
-	constructor(game, parent) {
-		super(game);
-
+	constructor(parent) {
+		super(parent.game);
 		this.parent = parent;
+		this.animator = new WeaponAnimator(this);
 
+		this.width = 24;
+		this.height = 16;
 		this.x = this.parent.x;
 		this.y = this.parent.y;
-		this.width = 12 * 2;
-		this.height = 8 * 2;
 
-		this.sprite = this.game.assets.sprites.weapon;
+		this.sprite = this.parent.game.assets.sprites.weapon;
 		this.spriteWidth = 12;
 		this.spriteHeight = 8;
-		this.frameX = 0;
-		this.frameY = 0;
+		this.frameX = 1;
 		this.rotate = false;
 
-		this.hitbox = new Hitbox(this.game, this, 'fuchsia', 4, -8, 8, 16);
+		this.isAttacking = false;
+		this.states = [
+			new IdleWeaponState(this),
+			new AttackingWeaponState(this),
+		];
+		this.currentState = this.states[0];
+		this.currentState.enter();
 	}
 	draw(context) {
 		let destX = (this.parent.directionH === 1) ? this.x : -this.x - this.width + this.parent.width - this.spriteWidth;
 		let destY = this.y;
 
 		context.save(); // Save the current transformation state.
-
+		context.scale(this.parent.directionH, 1);
 		if (this.rotate) {
 			context.translate(destX, destY + this.height);
 			context.rotate(Math.PI/2 * 3);
@@ -36,17 +40,10 @@ export class Weapon extends Entity {
 			destX = 0; // The rotated X coordinate
 			destY = 0;
 		}
-
-		this.hitbox.x = destX + this.hitbox.offX;
-		this.hitbox.y = destY + this.hitbox.offY;
-		this.hitbox.draw(context);
-
-		context.strokeStyle = 'green';
-		context.strokeRect(destX, destY, this.width, this.height);
 		context.drawImage(
 			this.sprite, // Image.
 			this.frameX * this.spriteWidth, // Source x.
-			this.frameY * this.spriteHeight, // Source y.
+			0, // Source y.
 			this.spriteWidth, // Source width.
 			this.spriteHeight, // Source height.
 			destX, // Destination x.
@@ -56,9 +53,10 @@ export class Weapon extends Entity {
 		);
 		context.restore(); // Restore the previous transformation state.
 	}
-	update() {
-		this.x = this.parent.x + this.parent.wpnOffX;
-		this.y = this.parent.y + this.parent.wpnOffY;
-		this.hitbox.update();
+	update(deltaTime) {
+		this.x = this.parent.x;
+		this.y = this.parent.y;
+		this.animator.update(deltaTime);
+		this.currentState.update(deltaTime);
 	}
 }
