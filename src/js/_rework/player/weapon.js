@@ -32,7 +32,7 @@ export class Weapon extends Entity {
 		let destY = this.y;
 
 		context.save(); // Save the current transformation state.
-
+		context.scale(this.parent.directionH, 1);
 		if (this.rotate) {
 			context.translate(destX, destY + this.height);
 			context.rotate(Math.PI/2 * 3);
@@ -40,7 +40,6 @@ export class Weapon extends Entity {
 			destX = 0; // The rotated X coordinate
 			destY = 0;
 		}
-
 		context.drawImage(
 			this.sprite, // Image.
 			this.frameX * this.spriteWidth, // Source x.
