@@ -12,9 +12,7 @@ window.addEventListener('load', () => {
 	const assets = {
 		sprites: {
 			viking: document.querySelector('#sprite--viking'),
-			weapon: document.querySelector('#sprite--weapon'),
-			tiles: document.querySelector('#sprite--tiles'),
-			enemy1: document.querySelector('#sprite--enemy1'),
+			playerStones: document.querySelector('#sprite--player-stones'),
 		}
 	};
 	//startBtn.addEventListener('click', (e) => {

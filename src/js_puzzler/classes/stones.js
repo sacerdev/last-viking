@@ -36,15 +36,30 @@ export class Stone extends Base {
 export class PlayerStone extends Stone {
 	constructor(loop, type) {
 		super(loop, type);
+
+		this.tileset = this.loop.game.assets.sprites.playerStones;
+		this.spriteWidth = 32;
+		this.spriteHeight = 32;
 	}
 	draw(context, x, y) {
 		if (this.isAlive) {
-			context.fillStyle = this.sibling.isAlive ? STONE_TYPE_COLORS[this.type] : STONE_TYPE_COLORS2[this.type];
-			context.fillRect(
-				x + this.loop.tilePadding,
-				y + this.loop.tilePadding,
-				this.loop.tileSize - this.loop.tilePadding * 2,
-				this.loop.tileSize - this.loop.tilePadding * 2
+			// context.fillStyle = this.sibling.isAlive ? STONE_TYPE_COLORS[this.type] : STONE_TYPE_COLORS2[this.type];
+			// context.fillRect(
+			// 	x + this.loop.tilePadding,
+			// 	y + this.loop.tilePadding,
+			// 	this.loop.tileSize - this.loop.tilePadding * 2,
+			// 	this.loop.tileSize - this.loop.tilePadding * 2
+			// );
+			context.drawImage(
+				this.tileset, // Image.
+				this.type * this.spriteWidth, // Source x.
+				0, // Source y.
+				this.spriteWidth, // Source width.
+				this.spriteHeight, // Source height.
+				x, // Destination x.
+				y, // Destination y.
+				this.loop.tileSize, // Destination width.
+				this.loop.tileSize // Destination height.
 			);
 		}
 	}
