@@ -1,14 +1,28 @@
+/**
+ * Dependencies.
+ */
 import { Base } from '../../classes/base';
 
+/**
+ * GameField class.
+ */
 export class GameField extends Base {
 	constructor(loop) {
 		super();
+		// Keep reference to the GameLoop object.
 		this.loop = loop;
 	}
-	draw(context, x, y, COLS, ROWS) {
+	/**
+	 * Draw the game field.
+	 *
+	 * @param {CanvasRenderingContext2D} context The context to draw on.
+	 * @param {number} x The x position to start to draw the game field at.
+	 * @param {number} y The y position to start to draw the game field at.
+	 */
+	draw(context, x, y,) {
 		context.save();
 		context.fillStyle = '#9DB2BF';
-		context.fillRect(x, y, this.loop.tileSize * COLS, this.loop.tileSize * ROWS);
+		context.fillRect(x, y, this.loop.tileSize * this.loop.COLS, this.loop.tileSize * this.loop.ROWS);
 
 		// Set the global composite operation to "destination-in"
 		context.globalCompositeOperation = 'source-atop';
