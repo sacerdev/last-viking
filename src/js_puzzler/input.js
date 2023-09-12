@@ -11,6 +11,7 @@ export class InputHandler {
 		this.rightPressed = 0;
 		this.rotateClockwisePressed = 0;
 		this.rotateCounterClockwisePressed = 0;
+		this.downPressed = 0;
 		this.dropPressed = 0;
 
 		document.addEventListener('keydown', (event) => {
@@ -23,6 +24,8 @@ export class InputHandler {
 				this.rotateClockwisePressed = 1;
 			} else if (key === ROTATE_CCW_KEY) {
 				this.rotateCounterClockwisePressed = 1;
+			} else if (key === DOWN_KEY) {
+				this.downPressed = 1;
 			} else if (key === DROP_KEY) {
 				this.dropPressed = 1;
 			}
@@ -38,6 +41,8 @@ export class InputHandler {
 				this.rotateClockwisePressed = 0;
 			} else if (key === ROTATE_CCW_KEY) {
 				this.rotateCounterClockwisePressed = 0;
+			} else if (key === DOWN_KEY) {
+				this.downPressed = 0;
 			} else if (key === DROP_KEY) {
 				this.dropPressed = 0;
 			}

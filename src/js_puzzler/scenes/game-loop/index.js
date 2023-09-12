@@ -1,5 +1,6 @@
 import { Scene } from '../../classes/scene';
 import { FoeStone, PlayerStone, Stone, STONE_GROUPS, STONE_TYPES } from '../../classes/stones';
+import { GameField } from './game-field';
 
 const COLS = 8;
 const ROWS = 16;
@@ -10,6 +11,7 @@ export class GameLoop extends Scene {
 
 		this.level = 1;
 
+		this.gameField = new GameField(this);
 		this.tiles = new Array(COLS * ROWS).fill(0);
 
 		this.tileSize = 32;
@@ -22,21 +24,33 @@ export class GameLoop extends Scene {
 
 		this.isDropping = false;
 
+		this.activeStoneGroup = null;
+		this.nextStoneGroup = this.getRandomStoneGroup();
 		this.addNewStoneGroup();
 		this.addFoeStones(this.level * 3);
 	}
 	draw(context) {
-		this.offsetX = this.game.width / 2 - this.tileSize * COLS / 2;
-		this.offsetY = this.game.height / 2 - this.tileSize * ROWS / 2;
+		const offsetX = this.game.width / 2 - this.tileSize * COLS / 2;
+		const offsetY = this.game.height / 2 - this.tileSize * ROWS / 2;
+
+		this.gameField.draw(context, offsetX, offsetY, COLS, ROWS);
 
 		this.tiles.forEach((tile, index) => {
-			const x = (index % COLS) * this.tileSize + this.offsetX;
-			const y = Math.floor(index / COLS) * this.tileSize + this.offsetY;
-			context.strokeStyle = '#000';
-			context.strokeRect(x, y, this.tileSize, this.tileSize);
+			const x = (index % COLS) * this.tileSize + offsetX;
+			const y = Math.floor(index / COLS) * this.tileSize + offsetY;
+			// context.strokeStyle = '#000';
+			// context.strokeRect(x, y, this.tileSize, this.tileSize);
 			if (tile instanceof Stone) {
 				tile.draw(context, x, y)
 			}
+		});
+
+		this.nextStoneGroup.forEach((stone, si) => {
+			stone.draw(
+				context,
+				offsetX + this.tileSize * (COLS + 2 + si),
+				offsetY + this.tileSize * (ROWS - 13)
+			);
 		});
 	}
 	update(deltaTime) {
@@ -72,6 +86,10 @@ export class GameLoop extends Scene {
 			console.log('rotate counter clockwise');
 			this.rotateActiveStoneGroup(-1);
 			input.rotateCounterClockwisePressed++;
+		} else if (input.downPressed === 1) {
+			console.log('down');
+			this.moveActiveStoneGroupDown();
+			input.downPressed++;
 		} else if (input.dropPressed === 1) {
 			console.log('put down');
 			this.isDropping = true;
@@ -83,10 +101,12 @@ export class GameLoop extends Scene {
 		const newIndexB = this.activeStoneGroup[1] + direction;
 		const highestIndex = Math.max(...this.activeStoneGroup);
 		const lowestIndex = Math.min(...this.activeStoneGroup);
+		const hitsStuffA = this.tiles[newIndexA] !== 0;
+		const hitsStuffB = this.tiles[newIndexB] !== 0;
 
 		if (direction > 0 && highestIndex % COLS !== COLS - 1) {
 			// Moving right.
-			if (newIndexA > newIndexB) {
+			if (newIndexA > newIndexB && !hitsStuffA) {
 				// Move stone A.
 				this.tiles[newIndexA] = this.tiles[this.activeStoneGroup[0]];
 				this.tiles[this.activeStoneGroup[0]] = 0;
@@ -95,7 +115,7 @@ export class GameLoop extends Scene {
 				this.tiles[newIndexB] = this.tiles[this.activeStoneGroup[1]];
 				this.tiles[this.activeStoneGroup[1]] = 0;
 				this.activeStoneGroup[1] = newIndexB;
-			} else {
+			} else if (!hitsStuffB) {
 				// Move stone B.
 				this.tiles[newIndexB] = this.tiles[this.activeStoneGroup[1]];
 				this.tiles[this.activeStoneGroup[1]] = 0;
@@ -107,7 +127,7 @@ export class GameLoop extends Scene {
 			}
 		} else if (direction < 0 && lowestIndex % COLS !== 0) {
 			// Moving left.
-			if (newIndexA < newIndexB) {
+			if (newIndexA < newIndexB && !hitsStuffA) {
 				// Move stone A.
 				this.tiles[newIndexA] = this.tiles[this.activeStoneGroup[0]];
 				this.tiles[this.activeStoneGroup[0]] = 0;
@@ -116,7 +136,7 @@ export class GameLoop extends Scene {
 				this.tiles[newIndexB] = this.tiles[this.activeStoneGroup[1]];
 				this.tiles[this.activeStoneGroup[1]] = 0;
 				this.activeStoneGroup[1] = newIndexB;
-			} else {
+			} else if (!hitsStuffB) {
 				// Move stone B.
 				this.tiles[newIndexB] = this.tiles[this.activeStoneGroup[1]];
 				this.tiles[this.activeStoneGroup[1]] = 0;
@@ -242,6 +262,17 @@ export class GameLoop extends Scene {
 		// All PlayerStone entities with siblings must fall down together.
 		this.addNewStoneGroup();
 	}
+	// moveStonesDown(stones) {
+	// 	stones.forEach((stone) => {
+	// 		const isOnBottom = Math.floor(stone / COLS) === ROWS - 1;
+	// 		const wouldHitStone = this.tiles[stone + COLS] !== 0;
+
+	// 		if (!isOnBottom && !wouldHitStone) {
+	// 			this.tiles[stone + COLS] = this.tiles[stone];
+	// 			this.tiles[stone] = 0;
+	// 		}
+	// 	});
+	// }
 	getHorizontalMatches(start) {
 		const matchingIndizes = [start];
 
@@ -296,9 +327,9 @@ export class GameLoop extends Scene {
 		}
 	}
 	addNewStoneGroup() {
-		const newStoneGroup = this.getRandomStoneGroup();
 		this.activeStoneGroup = null;
-		this.addStonegroupToTiles(newStoneGroup);
+		this.addStonegroupToTiles(this.nextStoneGroup);
+		this.nextStoneGroup = this.getRandomStoneGroup();
 	}
 	addFoeStones(amount) {
 		// Get available indexes.

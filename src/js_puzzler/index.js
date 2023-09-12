@@ -13,6 +13,7 @@ window.addEventListener('load', () => {
 		sprites: {
 			viking: document.querySelector('#sprite--viking'),
 			playerStones: document.querySelector('#sprite--player-stones'),
+			foeStones: document.querySelector('#sprite--foe-stones'),
 		}
 	};
 	//startBtn.addEventListener('click', (e) => {

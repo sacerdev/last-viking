@@ -27,29 +27,12 @@ export class Stone extends Base {
 
 		this.x = null;
 		this.y = null;
-	}
-	setSibling(sibling) {
-		this.sibling = sibling;
-	}
-}
 
-export class PlayerStone extends Stone {
-	constructor(loop, type) {
-		super(loop, type);
-
-		this.tileset = this.loop.game.assets.sprites.playerStones;
 		this.spriteWidth = 32;
 		this.spriteHeight = 32;
 	}
 	draw(context, x, y) {
 		if (this.isAlive) {
-			// context.fillStyle = this.sibling.isAlive ? STONE_TYPE_COLORS[this.type] : STONE_TYPE_COLORS2[this.type];
-			// context.fillRect(
-			// 	x + this.loop.tilePadding,
-			// 	y + this.loop.tilePadding,
-			// 	this.loop.tileSize - this.loop.tilePadding * 2,
-			// 	this.loop.tileSize - this.loop.tilePadding * 2
-			// );
 			context.drawImage(
 				this.tileset, // Image.
 				this.type * this.spriteWidth, // Source x.
@@ -63,24 +46,35 @@ export class PlayerStone extends Stone {
 			);
 		}
 	}
+	setSibling(sibling) {
+		this.sibling = sibling;
+	}
+}
+
+export class PlayerStone extends Stone {
+	constructor(loop, type) {
+		super(loop, type);
+		this.tileset = this.loop.game.assets.sprites.playerStones;
+	}
 }
 
 export class FoeStone extends Stone {
 	constructor(loop, type) {
 		super(loop, type);
+		this.tileset = this.loop.game.assets.sprites.foeStones;
 	}
-	draw(context, x, y) {
-		if (this.isAlive) {
-			context.fillStyle = STONE_TYPE_COLORS[this.type];
-			context.beginPath();
-			context.arc(
-				x + this.loop.tileSize / 2,
-				y + this.loop.tileSize / 2,
-				this.loop.tileSize / 2 - this.loop.tilePadding * 2,
-				0,
-				2 * Math.PI
-			);
-			context.fill();
-		}
-	}
+	// draw(context, x, y) {
+	// 	if (this.isAlive) {
+	// 		context.fillStyle = STONE_TYPE_COLORS[this.type];
+	// 		context.beginPath();
+	// 		context.arc(
+	// 			x + this.loop.tileSize / 2,
+	// 			y + this.loop.tileSize / 2,
+	// 			this.loop.tileSize / 2 - this.loop.tilePadding * 2,
+	// 			0,
+	// 			2 * Math.PI
+	// 		);
+	// 		context.fill();
+	// 	}
+	// }
 }
