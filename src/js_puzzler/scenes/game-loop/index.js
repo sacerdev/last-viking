@@ -79,12 +79,6 @@ export class GameLoop extends Scene {
 			const y = Math.floor(stone.index / this.COLS) * this.tileSize + offsetY;
 			stone.draw(context, x, y);
 		});
-		// NextStoneGroup.
-		this.nextStoneGroup.forEach((stone, si) => {
-			const x = offsetX + this.tileSize * (this.COLS + 2 + si);
-			const y = offsetY + this.tileSize * (this.ROWS - 13);
-			stone.draw(context, x, y);
-		});
 	}
 	/**
 	 * @inheritdoc
@@ -105,6 +99,7 @@ export class GameLoop extends Scene {
 				this.counter += deltaTime;
 			}
 		}
+		this.gameField.update(deltaTime);
 	}
 	/**
 	 * Handle input.

@@ -2,6 +2,7 @@
  * Dependencies.
  */
 import { Base } from '../../classes/base';
+import { MrV } from './mr-v';
 
 /**
  * GameField class.
@@ -11,6 +12,8 @@ export class GameField extends Base {
 		super();
 		// Keep reference to the GameLoop object.
 		this.loop = loop;
+
+		this.viking = new MrV(loop.game);
 	}
 	/**
 	 * Draw the game field.
@@ -42,5 +45,18 @@ export class GameField extends Base {
 		// Reset the global composite operation
 		context.globalCompositeOperation = 'source-over';
 		context.restore();
+
+		// NextStoneGroup.
+		this.loop.nextStoneGroup.forEach((stone, si) => {
+			const stoneX = x + this.loop.tileSize * (this.loop.COLS + 2 + si);
+			const stoneY = y + this.loop.tileSize * (this.loop.ROWS - 13);
+			stone.draw(context, stoneX, stoneY);
+		});
+
+		//this.viking.draw(context, x + this.loop.tileSize * (this.loop.COLS + 4), y + this.loop.tileSize * (this.loop.ROWS - 13.5));
+		this.viking.draw(context, x + this.loop.tileSize * (this.loop.COLS + 2), y + this.loop.tileSize * (this.loop.ROWS - 12));
+	}
+	update(deltaTime) {
+		this.viking.update(deltaTime);
 	}
 }
