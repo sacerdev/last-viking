@@ -5,6 +5,7 @@ import { Scene } from '../../classes/scene';
 import { GameField } from './game-field';
 import {
 	getFoeStones,
+	getHorizontalMatches,
 	getRandomStoneGroup,
 	hitsStuff,
 	moveStoneGroupDown
@@ -141,17 +142,14 @@ export class GameLoop extends Scene {
 	 * Move active stone group down.
 	 */
 	moveActiveStoneGroupDown() {
-		const canMove = moveStoneGroupDown(this.activeStoneGroup, this.getObstacles(), this);
+		const canMove = moveStoneGroupDown(this.activeStoneGroup, this);
 		const hasMoved = canMove[0] && canMove[1];
 		if (!hasMoved) {
 			if (this.isGameOver()) {
 				this.gameOver = true;
 				console.log('game over');
 			} else {
-				this.isDropping = false;
-				this.playerStones.push(...this.activeStoneGroup);
-				this.activeStoneGroup = this.nextStoneGroup;
-				this.nextStoneGroup = getRandomStoneGroup(this);
+				this.handleActiveStoneDropped();
 			}
 		}
 	}
@@ -225,6 +223,22 @@ export class GameLoop extends Scene {
 				rotateIfNeeded(indexB + 1);
 			}
 		}
+	}
+	handleActiveStoneDropped() {
+		const markedAsDead = [];
+		this.activeStoneGroup.forEach((stone) => {
+			const matches = getHorizontalMatches(stone, this);
+			console.log(matches);
+			if (matches.length >= 4) {
+				markedAsDead.push(...matches);
+			}
+		});
+		console.log({markedAsDead});
+
+		this.isDropping = false;
+		this.playerStones.push(...this.activeStoneGroup);
+		this.activeStoneGroup = this.nextStoneGroup;
+		this.nextStoneGroup = getRandomStoneGroup(this);
 	}
 	/**
 	 * Get obstacles.

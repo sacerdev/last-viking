@@ -53,15 +53,14 @@ export function getFoeStones(amount, parent) {
  * Move stone group down.
  *
  * @param {Array} stoneGroup The stone group to move down.
- * @param {Array} obstacles The obstacles to check for collision.
  * @param {Object} parent The parent object to get bounds from.
  *
  * @returns {Array} The result of the move.
  */
-export function moveStoneGroupDown(stoneGroup, obstacles, parent) {
+export function moveStoneGroupDown(stoneGroup, parent) {
 	let canMove = [false, false];
 	stoneGroup.forEach((stone, si) => {
-		canMove[si] = canMoveTo(stone.index + parent.COLS, obstacles, parent);
+		canMove[si] = canMoveTo(stone.index + parent.COLS, parent);
 	});
 
 	// Both stones must be able to move down.
@@ -77,12 +76,11 @@ export function moveStoneGroupDown(stoneGroup, obstacles, parent) {
  * Check if stone group can move to index.
  *
  * @param {number} index The index to check.
- * @param {Array} obstacles The obstacles to check for collision.
  * @param {Object} parent The parent object to get bounds from.
  *
  * @returns {boolean} True if the stone group can move to the index.
  */
-export function canMoveTo(index, obstacles, parent) {
+export function canMoveTo(index, parent) {
 	// Check bounds.
 	// Do that one after another to spare some runtime.
 	const isOnBottom = Math.floor(index / parent.COLS) === parent.ROWS;
@@ -90,8 +88,7 @@ export function canMoveTo(index, obstacles, parent) {
 		return false;
 	}
 	// If in bounds check for collision with obstacles.
-	const hitsStuff = hitsStuff(index, obstacles);
-	return !hitsStuff;
+	return !hitsStuff(index, parent.getObstacles());
 }
 
 /**
@@ -106,4 +103,36 @@ export function hitsStuff(index, obstacles) {
 	return obstacles.some((obstacle) => {
 		return obstacle.index === index;
 	});
+}
+
+export function getHorizontalMatches(stone, parent) {
+	const matches = [stone];
+	const obstacles = parent.getObstacles();
+	// Check to the left.
+	console.log({stone, matches, startIndex: stone.index - 1 });
+	for (let li = stone.index - 1; li % parent.COLS !== 0; li--) {
+		console.log({li, obstacles});
+		matches.push(
+			...obstacles.filter(
+				(obstacle) =>
+					stone.type === obstacle.type
+					&& obstacle.index === li
+			)
+		);
+	}
+
+	// Check to the right.
+	console.log({rstartIndex: stone.index + 1, bound: stone.index + 1 % parent.COLS })
+	for (let ri = stone.index + 1; ri % parent.COLS !== parent.COLS - 1; ri++) {
+		console.log({ri, obstacles});
+		matches.push(
+			...obstacles.filter(
+				(obstacle) =>
+					stone.type === obstacle.type
+					&& obstacle.index === ri
+			)
+		);
+	}
+	console.log({matches});
+	return matches;
 }
