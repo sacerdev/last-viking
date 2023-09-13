@@ -11,7 +11,7 @@ module.exports = (env, options) => {
   return {
     mode: options.mode,
     entry: {
-      index: './src/js_puzzler/index.js',
+      index: './src/js/index.js',
     },
     output: {
       filename: 'game.js',
