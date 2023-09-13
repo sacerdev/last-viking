@@ -42,7 +42,8 @@ export class WeaponAnimator extends Animator {
 		super(weapon);
 		this.weapon = this.parent;
 		this.offsets = {
-			IDLE: [[46, 34], [46, 36], [46, 36], [46, 38], [46, 36]],
+			//IDLE: [[46, 34], [46, 36], [46, 36], [46, 38], [46, 36]],
+			IDLE: [[46, -34], [46, -36], [46, -36], [46, -38], [46, -36]],
 			RUNNING: [[46, 34], [48, 32], [46, 34]],
 			JUMPING: [[46, 34], [46, 34]],
 			FALLING: [[46, 34], [46, 34]],

@@ -6,7 +6,7 @@ export class Animator extends Base {
 		this.parent = parent;
 		this.frameTimer = 0;
 
-		this.animations = {}
+		this.animations = [];
 		this.currentAnimation = null;
 	}
 	update(deltaTime) {
@@ -20,23 +20,14 @@ export class Animator extends Base {
 				if (loop) {
 					this.frameTimer = 0;
 				}
-				if (this.parent.frameX < maxFrame) {
-					this.parent.frameX++;
+				if (this.frameX < maxFrame) {
+					this.frameX++;
 				} else if (loop) {
-					this.parent.frameX = 0;
+					this.frameX = 0;
 				}
-			} else if (this.parent.frameX <= maxFrame) {
+			} else if (this.frameX <= maxFrame) {
 				this.frameTimer += deltaTime;
 			}
-		}
-	}
-	play(index) {
-		this.frameTimer = 0;
-		console.log(this.animations);
-		this.currentAnimation = this.animations[index] || null;
-		if (this.currentAnimation !== null) {
-			this.parent.frameX = this.currentAnimation.startFrameX;
-			this.parent.frameY = this.currentAnimation.startFrameY;
 		}
 	}
 }

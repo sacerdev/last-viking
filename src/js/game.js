@@ -1,8 +1,16 @@
+/**
+ * Dependencies.
+ */
 import { Base } from './classes/base';
-import { InputHandler } from './input-handler/input-handler';
-import { Level1 } from './levels/level1/level1';
-import { Player } from './player/player';
+import { InputHandler } from './input';
+import { GameLoop } from './scenes/game-loop';
 
+/**
+ * Game.
+ *
+ * The game object is the main entry point for the game.
+ * It holds the canvas, the assets and the game loop.
+ */
 export class Game extends Base {
 	constructor(width, height, assets) {
 		super();
@@ -11,52 +19,49 @@ export class Game extends Base {
 		// Canvas dimensions.
 		this.width = width;
 		this.height = height;
-		// Physics.
-		this.gravity = 1;
-		// Camera.
-		this.offsetX = 0;
-		this.offsetY = 0;
-
-		// Create game levels.
-		this.currentLevel = 0;
-		this.levels = [
-			new Level1(this),
-		];
-		this.screens = [];
-
-		// Create game Objects.
+		// Input handler.
 		this.input = new InputHandler();
-		this.player = new Player(this);
-		this.needsUpdate = [this.player];
-		this.needsDraw = [this.player];
+		// Load scenes.
+		this.scenes = {
+			loop: new GameLoop(this),
+		};
+		this.curentScene = 'loop';
+		// Items to draw.
+		this.drawItems = [
+			this.getCurrentScene(),
+		];
+		// Items to update.
+		this.updateItems = [
+			this.getCurrentScene(),
+		];
 	}
+	/**
+	 * @inheritdoc
+	 */
 	draw(context) {
 		// Clear.
 		context.clearRect(0, 0, this.width, this.height);
 
 		context.save();
-		context.translate(this.offsetX, this.offsetY);
-		// Draw the level.
-		this.getCurrentLevel().draw(context);
-
-		// // Draw the entities.
-		this.needsDraw.forEach((entity) => {
-			entity.draw(context);
+		this.drawItems.forEach((item) => {
+			// TODO: Draw in order of item.zIndex.
+			item.draw(context);
 		});
 		context.restore();
 	}
+	/**
+	 * @inheritdoc
+	 */
 	update(deltaTime) {
-		this.getCurrentLevel().update(deltaTime);
-		this.needsUpdate.forEach((entity) => {
-			entity.update(deltaTime);
-			entity?.applyGravity();
+		this.updateItems.forEach((item) => {
+			item.update(deltaTime);
 		});
 	}
-	getCurrentLevel() {
-		if (this.currentLevel >= 0) {
-			return this.levels[this.currentLevel];
-		} else {
-			return this.screens[Math.abs(this.currentLevel) - 1];
-		}
+	/**
+	 * Get the current scene.
+	 * @return {Scene} The current scene.
+	 */
+	getCurrentScene() {
+		return this.scenes[this.curentScene];
 	}
 }

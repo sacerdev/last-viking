@@ -8,8 +8,8 @@ export class Weapon extends Entity {
 		this.parent = parent;
 		this.animator = new WeaponAnimator(this);
 
-		this.width = 24;
-		this.height = 16;
+		this.width = 12 * 16;
+		this.height = 8 * 16;
 		this.x = this.parent.x;
 		this.y = this.parent.y;
 
